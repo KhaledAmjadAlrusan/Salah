@@ -45,6 +45,11 @@ kotlin {
             implementation(libs.navigation.compose)
             implementation(compose.materialIconsExtended)
             implementation(libs.kotlinx.datetime)
+
+            implementation(libs.lifecycle.viewmodel)
+            implementation(libs.lifecycle.viewmodel.comppose)
+            api(libs.moko.permissions)
+            api(libs.moko.permissions.compose)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
