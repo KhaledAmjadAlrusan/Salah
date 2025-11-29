@@ -33,9 +33,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.knight.salah.presentation.components.SettingsItem
 import com.knight.salah.presentation.components.SettingsSection
 import com.knight.salah.presentation.components.SettingsSwitchItem
+import dev.icerock.moko.permissions.PermissionState
+import dev.icerock.moko.permissions.PermissionState.*
+import dev.icerock.moko.permissions.compose.BindEffect
+import dev.icerock.moko.permissions.compose.rememberPermissionsControllerFactory
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -47,6 +52,15 @@ fun SettingsScreen(
     var locationEnabled by remember { mutableStateOf(true) }
     var darkModeEnabled by remember { mutableStateOf(false) }
     var soundEnabled by remember { mutableStateOf(true) }
+
+    val factory = rememberPermissionsControllerFactory()
+    val controller = remember(factory) {
+        factory.createPermissionsController()
+    }
+    BindEffect(controller)
+    val viewModel = viewModel {
+        SettingViewModel(controller)
+    }
 
     Scaffold(
         topBar = {
@@ -75,14 +89,27 @@ fun SettingsScreen(
     ) { paddingValues ->
         SettingsContent(
             modifier = Modifier.padding(paddingValues),
-            notifications = notificationsEnabled,
-            notificationsEnabled = {notificationsEnabled = it},
+            notifications = viewModel.permissionState == Granted,
+            notificationsEnabled = {
+                when (viewModel.permissionState) {
+                    Granted -> {
+                    }
+
+                    DeniedAlways -> {
+                        controller.openAppSettings()
+                    }
+
+                    else -> {
+                        viewModel.provideOrRequestNotification()
+                    }
+                }
+            },
             sound = soundEnabled,
-            soundEnabled = {soundEnabled= it},
+            soundEnabled = { soundEnabled = it },
             location = locationEnabled,
-            locationEnabled = {locationEnabled= it},
+            locationEnabled = { locationEnabled = it },
             darkMode = darkModeEnabled,
-            darkModeEnabled = {darkModeEnabled= it},
+            darkModeEnabled = { darkModeEnabled = it },
         )
     }
 }
@@ -98,8 +125,7 @@ private fun SettingsContent(
     locationEnabled: (Boolean) -> Unit,
     darkMode: Boolean,
     darkModeEnabled: (Boolean) -> Unit,
-)
-{
+) {
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -108,6 +134,8 @@ private fun SettingsContent(
     ) {
         // Prayer Settings Section
         SettingsSection(title = "Prayer Settings") {
+
+            // Prayer Request Notification
             SettingsSwitchItem(
                 icon = Icons.Default.Notifications,
                 title = "Prayer Notifications",
@@ -139,7 +167,7 @@ private fun SettingsContent(
                 title = "Auto-location",
                 subtitle = "Use device location automatically",
                 isChecked = location,
-                onCheckedChange = { locationEnabled(it)  }
+                onCheckedChange = { locationEnabled(it) }
             )
 
             SettingsItem(
