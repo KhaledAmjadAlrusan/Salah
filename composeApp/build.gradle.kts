@@ -36,6 +36,9 @@ kotlin {
             implementation(project.dependencies.platform("com.google.firebase:firebase-bom:34.6.0"))
             implementation(libs.firebase.analytics)
         }
+        iosMain.dependencies {
+            implementation(libs.ktor.client.darwin)
+        }
         commonMain.dependencies {
             implementation(compose.runtime)
             implementation(compose.foundation)
@@ -51,6 +54,13 @@ kotlin {
             implementation(libs.kotlinx.datetime)
 
             api("io.github.mirzemehdi:kmpnotifier:1.6.0")
+
+            implementation(libs.ktor.client.core)
+            implementation(libs.ktor.client.content.negotiation)
+            implementation(libs.ktor.serialization.kotlinx.json)
+
+            implementation(libs.koin.core)
+            implementation(libs.koin.compose.viewmodel)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
