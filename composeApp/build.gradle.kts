@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     kotlin("plugin.serialization") version "2.2.20"
+    id("com.google.gms.google-services")
 }
 
 kotlin {
@@ -24,6 +25,7 @@ kotlin {
         iosTarget.binaries.framework {
             baseName = "ComposeApp"
             isStatic = true
+            export("io.github.mirzemehdi:kmpnotifier:1.6.0")
         }
     }
     
@@ -31,6 +33,8 @@ kotlin {
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
+            implementation(project.dependencies.platform("com.google.firebase:firebase-bom:34.6.0"))
+            implementation(libs.firebase.analytics)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -45,6 +49,8 @@ kotlin {
             implementation(libs.navigation.compose)
             implementation(compose.materialIconsExtended)
             implementation(libs.kotlinx.datetime)
+
+            api("io.github.mirzemehdi:kmpnotifier:1.6.0")
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

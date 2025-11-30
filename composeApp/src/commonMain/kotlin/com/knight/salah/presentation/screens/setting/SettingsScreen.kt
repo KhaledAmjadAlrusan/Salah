@@ -15,6 +15,7 @@ import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.LocationSearching
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.Speaker
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.VolumeUp
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -36,7 +37,10 @@ import androidx.compose.ui.text.font.FontWeight
 import com.knight.salah.presentation.components.SettingsItem
 import com.knight.salah.presentation.components.SettingsSection
 import com.knight.salah.presentation.components.SettingsSwitchItem
+import com.mmk.kmpnotifier.notification.NotificationImage
+import com.mmk.kmpnotifier.notification.NotifierManager
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import kotlin.random.Random
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -47,6 +51,15 @@ fun SettingsScreen(
     var locationEnabled by remember { mutableStateOf(true) }
     var darkModeEnabled by remember { mutableStateOf(false) }
     var soundEnabled by remember { mutableStateOf(true) }
+
+//    val factory = rememberPermissionsControllerFactory()
+//    val controller = remember(factory) {
+//        factory.createPermissionsController()
+//    }
+//    BindEffect(controller)
+//    val viewModel = viewModel {
+//        SettingViewModel(controller)
+//    }
 
     Scaffold(
         topBar = {
@@ -75,14 +88,27 @@ fun SettingsScreen(
     ) { paddingValues ->
         SettingsContent(
             modifier = Modifier.padding(paddingValues),
-            notifications = notificationsEnabled,
-            notificationsEnabled = {notificationsEnabled = it},
+            notifications = true,
+            notificationsEnabled = {
+//                when (viewModel.permissionState) {
+//                    Granted -> {
+//                    }
+//
+//                    DeniedAlways -> {
+//                        controller.openAppSettings()
+//                    }
+//
+//                    else -> {
+//                        viewModel.provideOrRequestNotification()
+//                    }
+//                }
+            },
             sound = soundEnabled,
-            soundEnabled = {soundEnabled= it},
+            soundEnabled = { soundEnabled = it },
             location = locationEnabled,
-            locationEnabled = {locationEnabled= it},
+            locationEnabled = { locationEnabled = it },
             darkMode = darkModeEnabled,
-            darkModeEnabled = {darkModeEnabled= it},
+            darkModeEnabled = { darkModeEnabled = it },
         )
     }
 }
@@ -98,8 +124,7 @@ private fun SettingsContent(
     locationEnabled: (Boolean) -> Unit,
     darkMode: Boolean,
     darkModeEnabled: (Boolean) -> Unit,
-)
-{
+) {
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -139,7 +164,7 @@ private fun SettingsContent(
                 title = "Auto-location",
                 subtitle = "Use device location automatically",
                 isChecked = location,
-                onCheckedChange = { locationEnabled(it)  }
+                onCheckedChange = { locationEnabled(it) }
             )
 
             SettingsItem(
@@ -182,6 +207,32 @@ private fun SettingsContent(
                 title = "Rate App",
                 subtitle = "Rate us on Play Store",
                 onClick = { /* Rate app */ }
+            )
+        }
+
+        // Prayer Settings Section
+        SettingsSection(title = "Debug testing") {
+
+            SettingsItem(
+                icon = Icons.Default.Speaker,
+                title = "Test Notification",
+                subtitle = "Debug",
+                onClick = {
+//                    Notifier.show("Test", "Body hey hey hey")
+
+                    val notifier = NotifierManager.getLocalNotifier()
+                    notifier.notify {
+                        id= Random.nextInt(0, Int.MAX_VALUE)
+                        title = "Title from KMPNotifier"
+                        body = "Body message from KMPNotifier"
+                        payloadData = mapOf(
+                            com.mmk.kmpnotifier.notification.Notifier.KEY_URL to "https://github.com/mirzemehdi/KMPNotifier/",
+                            "extraKey" to "randomValue"
+                        )
+                        image = NotificationImage.Url("https://github.com/user-attachments/assets/a0f38159-b31d-4a47-97a7-cc230e15d30b")
+                    }
+
+                }
             )
         }
 
