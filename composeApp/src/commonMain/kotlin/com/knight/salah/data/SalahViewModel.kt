@@ -4,14 +4,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.knight.salah.domain.PrayerTime
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class SalahViewModel(
     private val repository: SalahRepository
 ) : ViewModel() {
 
-    val prayerTime = MutableStateFlow<PrayerTime?>(null)
-        private set
+    val _prayerTime = MutableStateFlow<PrayerTime?>(null)
+    val prayerTime = _prayerTime.asStateFlow()
 
     init {
         getPrayerTime()
@@ -19,7 +20,7 @@ class SalahViewModel(
 
     fun getPrayerTime() {
         viewModelScope.launch {
-            prayerTime.emit(repository.getPrayers())
+            _prayerTime.emit(repository.getPrayers())
         }
     }
 }
