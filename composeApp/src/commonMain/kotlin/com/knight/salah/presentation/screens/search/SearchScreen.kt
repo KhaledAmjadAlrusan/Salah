@@ -27,8 +27,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.knight.salah.domain.Mosque
-import com.knight.salah.domain.generateMosques
+import com.knight.salah.domain.model.Mosque
+import com.knight.salah.domain.model.generateMosques
 import com.knight.salah.presentation.components.MosqueSearchResultItem
 import com.knight.salah.presentation.components.SearchBar
 import org.jetbrains.compose.ui.tooling.preview.Preview

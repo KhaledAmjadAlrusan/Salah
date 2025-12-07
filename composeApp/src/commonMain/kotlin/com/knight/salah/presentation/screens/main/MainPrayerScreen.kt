@@ -18,24 +18,27 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.knight.salah.domain.PrayerTime
-import com.knight.salah.domain.generatePrayerTimes
+import com.knight.salah.domain.model.PrayerTime
 import com.knight.salah.presentation.components.PrayerTimeCard
+import com.knight.salah.presentation.viewmodel.PrayerRow
+import com.knight.salah.presentation.viewmodel.SalahViewModel
+import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainPrayersScreen(
     onSearchClick: () -> Unit,
-    onSettingsClick: () -> Unit
+    onSettingsClick: () -> Unit,
+    viewModel: SalahViewModel = koinViewModel()
 ) {
-
-    val prayerTimes = remember { generatePrayerTimes() }
+    val state by viewModel.prayerState.collectAsState()
 
     Scaffold(
         topBar = {
@@ -75,7 +78,7 @@ fun MainPrayersScreen(
     ) { paddingValues ->
         MainPrayersContent(
             modifier = Modifier.padding(paddingValues),
-            prayerTimes = prayerTimes,
+            prayers = state.rows,
         )
     }
 }
@@ -83,7 +86,7 @@ fun MainPrayersScreen(
 @Composable
 private fun MainPrayersContent(
     modifier: Modifier = Modifier,
-    prayerTimes: List<PrayerTime>,
+    prayers: List<PrayerRow>,
 ) {
     Column(
         modifier = modifier
@@ -108,7 +111,7 @@ private fun MainPrayersContent(
         )
 
         LazyColumn {
-            items(prayerTimes) { prayer ->
+            items(prayers) { prayer ->
                 PrayerTimeCard(prayer = prayer)
             }
         }

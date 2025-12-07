@@ -1,6 +1,7 @@
-package com.knight.salah.data
+package com.knight.salah.domain.repoistory
 
-import com.knight.salah.domain.PrayerTime
+import com.knight.salah.data.SalahApi
+import com.knight.salah.domain.model.PrayerTime
 
 class SalahRepository(
     private val salahApi: SalahApi

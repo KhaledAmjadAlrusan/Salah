@@ -1,9 +1,10 @@
 package com.knight.salah.di
 
 import com.knight.salah.data.ApiClient
+import com.knight.salah.data.MockSalahApi
 import com.knight.salah.data.SalahApi
-import com.knight.salah.data.SalahRepository
-import com.knight.salah.data.SalahViewModel
+import com.knight.salah.domain.repoistory.SalahRepository
+import com.knight.salah.presentation.viewmodel.SalahViewModel
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.http.ContentType
@@ -24,7 +25,8 @@ val dataModule = module {
         }
     }
 
-    single<SalahApi> { ApiClient(get()) }
+//    single<SalahApi> { ApiClient(get()) }
+    single<SalahApi> { MockSalahApi() }
     single { SalahRepository(get()) }
 }
 

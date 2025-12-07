@@ -19,7 +19,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.knight.salah.domain.PrayerTime
+import com.knight.salah.domain.model.PrayerTime
+import com.knight.salah.presentation.viewmodel.PrayerRow
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.format
 import kotlinx.datetime.format.FormatStringsInDatetimeFormats
@@ -31,17 +32,14 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @Composable
 fun PrayerTimeCard(
     modifier: Modifier = Modifier,
-    prayer: PrayerTime,
+    prayer: PrayerRow,
 ) {
-    // No opt-in needed; not using byUnicodePattern
     val timeFmt = remember {
         LocalTime.Format {
-            amPmHour(Padding.NONE)   // 1..12, no leading zero
-            char(':'); minute()      // zero-padded by default
-            char(' '); amPmMarker(
-            am = "AM",
-            pm = "PM"
-        )
+            amPmHour(Padding.NONE)
+            char(':'); minute()
+            char(' ')
+            amPmMarker(am = "AM", pm = "PM")
         }
     }
 
@@ -51,12 +49,15 @@ fun PrayerTimeCard(
             .height(80.dp)
             .padding(4.dp),
         colors = CardDefaults.cardColors(
-            containerColor = if (prayer.isNextPrayer) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onPrimary
+            containerColor = if (prayer.isNextPrayer)
+                MaterialTheme.colorScheme.primary
+            else
+                MaterialTheme.colorScheme.onPrimary
         ),
         shape = RoundedCornerShape(12.dp)
     ) {
         Row(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 20.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -66,7 +67,10 @@ fun PrayerTimeCard(
                 Text(
                     text = prayer.name,
                     style = MaterialTheme.typography.bodyLarge,
-                    color = if (prayer.isNextPrayer) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.onSurface,
+                    color = if (prayer.isNextPrayer)
+                        MaterialTheme.colorScheme.surface
+                    else
+                        MaterialTheme.colorScheme.onSurface,
                     fontWeight = FontWeight.Medium,
                     fontSize = 18.sp
                 )
@@ -79,22 +83,37 @@ fun PrayerTimeCard(
                 }
             }
 
-            Text(
-                text = prayer.time?.format(timeFmt) ?: "--:--",
-                style = MaterialTheme.typography.headlineSmall,
-                color = if (prayer.isNextPrayer) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.primary,
-                fontWeight = FontWeight.Bold,
-                fontSize = 20.sp
-            )
+            Column(horizontalAlignment = Alignment.End) {
+                Text(
+                    text = "Athan: ${prayer.athan?.format(timeFmt) ?: "--:--"}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = if (prayer.isNextPrayer)
+                        MaterialTheme.colorScheme.surface
+                    else
+                        MaterialTheme.colorScheme.primary
+                )
+                Text(
+                    text = "Iqama: ${prayer.iqama?.format(timeFmt) ?: "--:--"}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = if (prayer.isNextPrayer)
+                        MaterialTheme.colorScheme.surface
+                    else
+                        MaterialTheme.colorScheme.primary
+                )
+            }
         }
     }
 }
-
 
 @Preview
 @Composable
 fun PreviewPrayerTimeCard() {
     PrayerTimeCard(
-        prayer = PrayerTime("Fajr", LocalTime(hour = 5, minute = 30))
+        prayer = PrayerRow(
+            name = "Fajr",
+            athan = LocalTime(hour = 5, minute = 30),
+            iqama = LocalTime(hour = 6, minute = 0),
+            isNextPrayer = true
+        )
     )
 }

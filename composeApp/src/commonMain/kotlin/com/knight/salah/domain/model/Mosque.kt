@@ -1,4 +1,4 @@
-package com.knight.salah.domain
+package com.knight.salah.domain.model
 
 import kotlinx.serialization.Serializable
 

@@ -1,6 +1,6 @@
 package com.knight.salah.data
 
-import com.knight.salah.domain.PrayerTime
+import com.knight.salah.domain.model.PrayerTime
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
