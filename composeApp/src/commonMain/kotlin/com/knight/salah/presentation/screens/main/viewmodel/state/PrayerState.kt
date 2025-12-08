@@ -3,10 +3,17 @@ package com.knight.salah.presentation.screens.main.viewmodel.state
 import com.knight.salah.domain.model.PrayerTime
 import com.knight.salah.domain.model.buildPrayerNotificationsForToday
 import com.knight.salah.platform.NotificationManager
-import com.knight.salah.util.currentLocalTime
-import com.knight.salah.util.toLocalTimeOrNull
+import com.knight.salah.core.util.currentLocalTime
+import com.knight.salah.core.util.toLocalTimeOrNull
+import com.knight.salah.domain.model.buildPrayerNotificationsForDay
+import com.knight.salah.getPlatform
+import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atTime
+import kotlinx.datetime.plus
+import kotlinx.datetime.toInstant
+import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
@@ -92,17 +99,29 @@ fun List<PrayerRow>.markNextPrayer(
 @OptIn(ExperimentalTime::class)
 fun PrayerTime.schedulePrayerNotifications(
     notificationManager: NotificationManager,
+    daysToSchedule: Int = 1,
     now: Instant = Clock.System.now(),
     zone: TimeZone = TimeZone.currentSystemDefault()
 ) {
-    val notifications = buildPrayerNotificationsForToday(now, zone)
+    require(daysToSchedule >= 1)
 
-    notifications.forEach { n ->
-        notificationManager.scheduleNotification(
-            id = n.id,
-            triggerAt = n.triggerAt,
-            title = n.title,
-            description = n.body
-        )
+    val today = now.toLocalDateTime(zone).date
+
+    for (offset in 0 until daysToSchedule) {
+        val date = today.plus(DatePeriod(days = offset))
+        val dayNotifications = buildPrayerNotificationsForDay(date, zone)
+
+        dayNotifications.forEach { n ->
+            // For *today*, skip times already in the past
+            if (date == today && n.triggerAt < now) return@forEach
+
+            notificationManager.scheduleNotification(
+                id = n.id,
+                triggerAt = n.triggerAt,
+                title = n.title,
+                description = n.body
+            )
+        }
     }
 }
+

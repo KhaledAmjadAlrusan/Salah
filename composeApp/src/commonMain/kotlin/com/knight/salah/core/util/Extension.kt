@@ -1,4 +1,4 @@
-package com.knight.salah.util
+package com.knight.salah.core.util
 
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone

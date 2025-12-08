@@ -31,7 +31,7 @@ class MainPrayerViewModel(
     suspend fun getPrayerTime() {
         updateLoading(true)
         val prayerTime = repository.getPrayers()
-        prayerTime?.schedulePrayerNotifications(notificationManager)
+        prayerTime?.schedulePrayerNotifications(notificationManager,7)
 
         _prayerState.update { state ->
             state.copy(

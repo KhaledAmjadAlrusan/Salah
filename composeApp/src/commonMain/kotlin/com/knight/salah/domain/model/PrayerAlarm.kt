@@ -1,6 +1,6 @@
 package com.knight.salah.domain.model
 
-import com.knight.salah.util.toLocalTimeOrNull
+import com.knight.salah.core.util.toLocalTimeOrNull
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone

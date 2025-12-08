@@ -2,6 +2,7 @@ package com.knight.salah.di
 
 import com.knight.salah.data.MockSalahApi
 import com.knight.salah.data.SalahApi
+import com.knight.salah.domain.repoistory.RefreshPrayerUseCase
 import com.knight.salah.domain.repoistory.SalahRepository
 import com.knight.salah.platformModule
 import com.knight.salah.presentation.screens.setting.SettingViewModel
@@ -29,6 +30,7 @@ val dataModule = module {
 //    single<SalahApi> { ApiClient(get()) }
     single<SalahApi> { MockSalahApi() }
     single { SalahRepository(get()) }
+    single { RefreshPrayerUseCase(get(),get()) }
 }
 
 val viewModelModule = module {

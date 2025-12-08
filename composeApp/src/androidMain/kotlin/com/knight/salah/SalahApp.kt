@@ -2,6 +2,7 @@ package com.knight.salah
 
 import android.app.Application
 import android.content.Context
+import com.knight.salah.worker.PrayerRefreshWorker
 
 class SalahApp: Application() {
     companion object{
@@ -14,5 +15,6 @@ class SalahApp: Application() {
         super.onCreate()
         instance = this
         AppInitializer.onApplicationStart()
+        PrayerRefreshWorker.scheduleDailyPrayerRefresh(this)
     }
 }
