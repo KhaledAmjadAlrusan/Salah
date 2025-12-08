@@ -25,10 +25,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.knight.salah.domain.model.PrayerTime
 import com.knight.salah.presentation.components.PrayerTimeCard
-import com.knight.salah.presentation.viewmodel.PrayerRow
-import com.knight.salah.presentation.viewmodel.SalahViewModel
+import com.knight.salah.presentation.screens.main.viewmodel.MainPrayerViewModel
+import com.knight.salah.presentation.screens.main.viewmodel.state.PrayerRow
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -36,7 +35,7 @@ import org.koin.compose.viewmodel.koinViewModel
 fun MainPrayersScreen(
     onSearchClick: () -> Unit,
     onSettingsClick: () -> Unit,
-    viewModel: SalahViewModel = koinViewModel()
+    viewModel: MainPrayerViewModel = koinViewModel()
 ) {
     val state by viewModel.prayerState.collectAsState()
 
@@ -115,6 +114,5 @@ private fun MainPrayersContent(
                 PrayerTimeCard(prayer = prayer)
             }
         }
-
     }
 }

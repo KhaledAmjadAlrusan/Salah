@@ -7,6 +7,9 @@ import android.os.Build
 import com.mmk.kmpnotifier.notification.NotifierManager
 import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
 import androidx.core.net.toUri
+import com.knight.salah.platform.NotificationManager
+import org.koin.core.module.Module
+import org.koin.dsl.module
 
 class AndroidPlatform : Platform {
     override val name: String = "Android ${Build.VERSION.SDK_INT}"
@@ -32,4 +35,8 @@ actual fun onApplicationStartPlatformSpecific() {
             )
         )
     )
+}
+
+actual fun platformModule(): Module = module {
+    single { NotificationManager(context = SalahApp.applicationContext()) }
 }

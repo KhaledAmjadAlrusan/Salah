@@ -1,7 +1,10 @@
 package com.knight.salah
 
+import com.knight.salah.platform.NotificationManager
 import com.mmk.kmpnotifier.notification.NotifierManager
 import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
+import org.koin.core.module.Module
+import org.koin.dsl.module
 import platform.UIKit.UIDevice
 import platform.UIKit.UIScreen
 import platform.UIKit.UIUserInterfaceStyle
@@ -25,4 +28,8 @@ actual fun onApplicationStartPlatformSpecific() {
             notificationSoundName = "custom_notification_sound.wav"
         )
     )
+}
+
+actual fun platformModule(): Module = module {
+    single { NotificationManager() }
 }

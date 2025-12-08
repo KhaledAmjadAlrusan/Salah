@@ -1,55 +1,29 @@
-package com.knight.salah.presentation.viewmodel
+package com.knight.salah.presentation.screens.main.viewmodel.state
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.knight.salah.domain.model.PrayerTime
-import com.knight.salah.domain.repoistory.SalahRepository
+import com.knight.salah.domain.model.buildPrayerNotificationsForToday
+import com.knight.salah.platform.NotificationManager
 import com.knight.salah.util.currentLocalTime
 import com.knight.salah.util.toLocalTimeOrNull
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalTime
-
-class SalahViewModel(
-    private val repository: SalahRepository
-) : ViewModel() {
-
-    val _prayerState = MutableStateFlow<PrayerState>(PrayerState())
-    val prayerState = _prayerState.asStateFlow()
-
-    init {
-        viewModelScope.launch {
-            getPrayerTime()
-        }
-    }
-
-    suspend fun getPrayerTime() {
-        updateLoading(true)
-        val prayerRows = repository.getPrayers()?.toPrayerRowsWithNext()
-        _prayerState.update { state ->
-            state.copy(
-                rows = prayerRows ?: emptyList(),
-                isLoading = false
-            )
-        }
-    }
-
-    fun updateLoading(isLoading: Boolean) {
-        _prayerState.update { state ->
-            state.copy(
-                isLoading = isLoading
-            )
-        }
-    }
-}
+import kotlinx.datetime.TimeZone
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
 
 data class PrayerState(
     val rows: List<PrayerRow> = emptyList(),
     val isLoading: Boolean = false
 )
+
+data class PrayerRow(
+    val name: String,
+    val athan: LocalTime?,   // Adhan
+    val iqama: LocalTime?,   // Iqama
+    val isNextPrayer: Boolean = false
+)
+
 
 fun PrayerTime.toPrayerRowsWithNext(
     now: LocalTime = currentLocalTime()
@@ -115,9 +89,20 @@ fun List<PrayerRow>.markNextPrayer(
     }
 }
 
-data class PrayerRow(
-    val name: String,
-    val athan: LocalTime?,   // Adhan
-    val iqama: LocalTime?,   // Iqama
-    val isNextPrayer: Boolean = false
-)
+@OptIn(ExperimentalTime::class)
+fun PrayerTime.schedulePrayerNotifications(
+    notificationManager: NotificationManager,
+    now: Instant = Clock.System.now(),
+    zone: TimeZone = TimeZone.currentSystemDefault()
+) {
+    val notifications = buildPrayerNotificationsForToday(now, zone)
+
+    notifications.forEach { n ->
+        notificationManager.scheduleNotification(
+            id = n.id,
+            triggerAt = n.triggerAt,
+            title = n.title,
+            description = n.body
+        )
+    }
+}

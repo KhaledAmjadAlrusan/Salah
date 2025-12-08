@@ -19,8 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.knight.salah.domain.model.PrayerTime
-import com.knight.salah.presentation.viewmodel.PrayerRow
+import com.knight.salah.presentation.screens.main.viewmodel.state.PrayerRow
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.format
 import kotlinx.datetime.format.FormatStringsInDatetimeFormats

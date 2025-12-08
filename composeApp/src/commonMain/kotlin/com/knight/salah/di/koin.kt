@@ -1,10 +1,11 @@
 package com.knight.salah.di
 
-import com.knight.salah.data.ApiClient
 import com.knight.salah.data.MockSalahApi
 import com.knight.salah.data.SalahApi
 import com.knight.salah.domain.repoistory.SalahRepository
-import com.knight.salah.presentation.viewmodel.SalahViewModel
+import com.knight.salah.platformModule
+import com.knight.salah.presentation.screens.setting.SettingViewModel
+import com.knight.salah.presentation.screens.main.viewmodel.MainPrayerViewModel
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.http.ContentType
@@ -31,12 +32,14 @@ val dataModule = module {
 }
 
 val viewModelModule = module {
-    factoryOf(::SalahViewModel)
+    factoryOf(::MainPrayerViewModel)
+    factoryOf(::SettingViewModel)
 }
 
 fun initKoin() {
     startKoin {
         modules(
+            platformModule(),
             dataModule,
             viewModelModule,
         )

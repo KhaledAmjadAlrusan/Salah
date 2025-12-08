@@ -37,14 +37,13 @@ import androidx.compose.ui.text.font.FontWeight
 import com.knight.salah.presentation.components.SettingsItem
 import com.knight.salah.presentation.components.SettingsSection
 import com.knight.salah.presentation.components.SettingsSwitchItem
-import com.mmk.kmpnotifier.notification.NotificationImage
-import com.mmk.kmpnotifier.notification.NotifierManager
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import kotlin.random.Random
+import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
+    viewModel: SettingViewModel = koinViewModel(),
     onBackClick: () -> Unit = {}
 ) {
     var notificationsEnabled by remember { mutableStateOf(true) }
@@ -52,14 +51,6 @@ fun SettingsScreen(
     var darkModeEnabled by remember { mutableStateOf(false) }
     var soundEnabled by remember { mutableStateOf(true) }
 
-//    val factory = rememberPermissionsControllerFactory()
-//    val controller = remember(factory) {
-//        factory.createPermissionsController()
-//    }
-//    BindEffect(controller)
-//    val viewModel = viewModel {
-//        SettingViewModel(controller)
-//    }
 
     Scaffold(
         topBar = {
@@ -109,6 +100,9 @@ fun SettingsScreen(
             locationEnabled = { locationEnabled = it },
             darkMode = darkModeEnabled,
             darkModeEnabled = { darkModeEnabled = it },
+            showNotification = {
+                viewModel.showNotification()
+            }
         )
     }
 }
@@ -124,6 +118,7 @@ private fun SettingsContent(
     locationEnabled: (Boolean) -> Unit,
     darkMode: Boolean,
     darkModeEnabled: (Boolean) -> Unit,
+    showNotification: () -> Unit
 ) {
     Column(
         modifier = modifier
@@ -218,20 +213,19 @@ private fun SettingsContent(
                 title = "Test Notification",
                 subtitle = "Debug",
                 onClick = {
-//                    Notifier.show("Test", "Body hey hey hey")
+//                    val notifier = NotifierManager.getLocalNotifier()
+//                    notifier.notify {
+//                        id= Random.nextInt(0, Int.MAX_VALUE)
+//                        title = "Title from KMPNotifier"
+//                        body = "Body message from KMPNotifier"
+//                        payloadData = mapOf(
+//                            com.mmk.kmpnotifier.notification.Notifier.KEY_URL to "https://github.com/mirzemehdi/KMPNotifier/",
+//                            "extraKey" to "randomValue"
+//                        )
+//                        image = NotificationImage.Url("https://github.com/user-attachments/assets/a0f38159-b31d-4a47-97a7-cc230e15d30b")
+//                    }
 
-                    val notifier = NotifierManager.getLocalNotifier()
-                    notifier.notify {
-                        id= Random.nextInt(0, Int.MAX_VALUE)
-                        title = "Title from KMPNotifier"
-                        body = "Body message from KMPNotifier"
-                        payloadData = mapOf(
-                            com.mmk.kmpnotifier.notification.Notifier.KEY_URL to "https://github.com/mirzemehdi/KMPNotifier/",
-                            "extraKey" to "randomValue"
-                        )
-                        image = NotificationImage.Url("https://github.com/user-attachments/assets/a0f38159-b31d-4a47-97a7-cc230e15d30b")
-                    }
-
+                    showNotification()
                 }
             )
         }
