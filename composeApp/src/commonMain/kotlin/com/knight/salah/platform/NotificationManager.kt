@@ -6,17 +6,24 @@ import kotlin.time.Instant
 expect class NotificationManager {
     fun showNotification(
         title: String,
-        description: String
+        description: String,
+        soundType: NotificationSoundType = NotificationSoundType.DEFAULT
     )
 
     @OptIn(ExperimentalTime::class)
     fun scheduleNotification(
-        id: String,            // unique per event (e.g. "fajr-athan")
-        triggerAt: Instant,    // when to fire
+        id: String,
+        triggerAt: Instant,
         title: String,
-        description: String
+        description: String,
+        soundType: NotificationSoundType
     )
 
     fun cancelScheduledNotification(id: String)
+}
 
+enum class NotificationSoundType {
+    DEFAULT,
+    ADHAN,
+    IQAMA
 }

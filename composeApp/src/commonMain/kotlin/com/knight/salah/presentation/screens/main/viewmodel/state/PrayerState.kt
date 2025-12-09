@@ -7,6 +7,7 @@ import com.knight.salah.core.util.currentLocalTime
 import com.knight.salah.core.util.toLocalTimeOrNull
 import com.knight.salah.domain.model.buildPrayerNotificationsForDay
 import com.knight.salah.getPlatform
+import com.knight.salah.platform.NotificationSoundType
 import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
@@ -114,12 +115,15 @@ fun PrayerTime.schedulePrayerNotifications(
         dayNotifications.forEach { n ->
             // For *today*, skip times already in the past
             if (date == today && n.triggerAt < now) return@forEach
+            val isAthan = n.title.lowercase().endsWith("athan")
+            val sound = if (isAthan) NotificationSoundType.ADHAN else NotificationSoundType.IQAMA
 
             notificationManager.scheduleNotification(
                 id = n.id,
                 triggerAt = n.triggerAt,
                 title = n.title,
-                description = n.body
+                description = n.body,
+                soundType = sound
             )
         }
     }
