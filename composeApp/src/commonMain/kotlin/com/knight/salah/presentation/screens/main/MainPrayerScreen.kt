@@ -77,6 +77,7 @@ fun MainPrayersScreen(
     ) { paddingValues ->
         MainPrayersContent(
             modifier = Modifier.padding(paddingValues),
+            date = state.date,
             prayers = state.rows,
         )
     }
@@ -85,6 +86,7 @@ fun MainPrayersScreen(
 @Composable
 private fun MainPrayersContent(
     modifier: Modifier = Modifier,
+    date:String,
     prayers: List<PrayerRow>,
 ) {
     Column(
@@ -92,9 +94,8 @@ private fun MainPrayersContent(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-
         Text(
-            text = "Today, November 15, 2024",
+            text = date,
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.outline,
             modifier = Modifier
