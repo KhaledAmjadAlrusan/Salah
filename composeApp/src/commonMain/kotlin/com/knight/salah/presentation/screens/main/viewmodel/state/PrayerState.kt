@@ -36,15 +36,18 @@ data class PrayerRow(
 
 
 private fun PrayerTime.buildPrayerRows(
-    date: LocalDate
 ): List<PrayerRow> {
     val rows = mutableListOf<PrayerRow>()
 
-    // Always
     rows += PrayerRow(
         name = "Fajr",
         athan = prayers.fajr.athan.toLocalTimeOrNull(),
         iqama = prayers.fajr.iqama.toLocalTimeOrNull()
+    )
+    rows += PrayerRow(
+        name = "Dhuhr",
+        athan = prayers.dhuhr.athan.toLocalTimeOrNull(),
+        iqama = prayers.dhuhr.iqama.toLocalTimeOrNull()
     )
     rows += PrayerRow(
         name = "Asr",
@@ -62,23 +65,13 @@ private fun PrayerTime.buildPrayerRows(
         iqama = prayers.isha.iqama.toLocalTimeOrNull()
     )
 
-    if (date.dayOfWeek == DayOfWeek.FRIDAY) {
-        // Friday → Jumuah instead of Dhuhr
-        prayers.jumuahPrayer.forEachIndexed { index, j ->
-            val label =
-                if (prayers.jumuahPrayer.size > 1) "Jumu'ah ${index + 1}" else "Jumu'ah"
-            rows += PrayerRow(
-                name = label,
-                athan = j.khutbah.toLocalTimeOrNull(),
-                iqama = j.iqama.toLocalTimeOrNull()
-            )
-        }
-    } else {
-        // Other days → normal Dhuhr, no Jumuah
+    // Always show Jumuah rows too
+    prayers.jumuahPrayer.forEachIndexed { index, j ->
+        val label = if (prayers.jumuahPrayer.size > 1) "Jumu'ah ${index + 1}" else "Jumu'ah"
         rows += PrayerRow(
-            name = "Dhuhr",
-            athan = prayers.dhuhr.athan.toLocalTimeOrNull(),
-            iqama = prayers.dhuhr.iqama.toLocalTimeOrNull()
+            name = label,
+            athan = j.khutbah.toLocalTimeOrNull(),
+            iqama = j.iqama.toLocalTimeOrNull()
         )
     }
 
@@ -95,24 +88,40 @@ fun PrayerTime.toPrayerRowsWithNext(
     val date = dt.date
     val time = dt.time
 
-    val rows = buildPrayerRows(date)
-    return rows.markNextPrayer(time)
+    val rows = buildPrayerRows()
+    return rows.markNextPrayer(time,date)
 }
 
 
 // Extension on List<PrayerRow> to mark which one is next
 fun List<PrayerRow>.markNextPrayer(
-    now: LocalTime = currentLocalTime()
+    now: LocalTime,
+    date: LocalDate
 ): List<PrayerRow> {
-    val withBaseTime = mapNotNull { row ->
+    val isFriday = date.dayOfWeek == DayOfWeek.FRIDAY
+
+    // Only consider some rows as "eligible" for highlighting
+    val eligible = filter { row ->
+        when {
+            // On Friday -> don't highlight Dhuhr
+            isFriday && row.name.startsWith("Dhuhr", ignoreCase = true) -> false
+
+            // On non-Friday -> don't highlight any Jumu'ah rows
+            !isFriday && row.name.startsWith("Jumu'ah", ignoreCase = true) -> false
+
+            else -> true
+        }
+    }
+
+    val withBaseTime = eligible.mapNotNull { row ->
         val base = row.iqama ?: row.athan
         base?.let { row to it }
     }.sortedBy { it.second }
 
     if (withBaseTime.isEmpty()) return this
 
-    val nextPair = withBaseTime.firstOrNull { it.second >= now } ?: withBaseTime.first()
-    val (nextRow, _) = nextPair
+    val (nextRow, _) =
+        withBaseTime.firstOrNull { it.second >= now } ?: withBaseTime.first()
 
     return map { row ->
         row.copy(
@@ -123,6 +132,7 @@ fun List<PrayerRow>.markNextPrayer(
     }
 }
 
+
 @OptIn(ExperimentalTime::class)
 fun PrayerTime.nextSwitchInstant(
     now: Instant,
@@ -130,7 +140,7 @@ fun PrayerTime.nextSwitchInstant(
 ): Instant? {
     val today = now.toLocalDateTime(zone).date
 
-    val points = buildPrayerRows(today)
+    val points = buildPrayerRows()
         .mapNotNull { row ->
             val base = row.iqama ?: row.athan
             base?.let { t -> today.atTime(t).toInstant(zone) }

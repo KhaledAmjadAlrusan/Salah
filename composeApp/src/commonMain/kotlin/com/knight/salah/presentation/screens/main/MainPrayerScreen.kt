@@ -75,8 +75,7 @@ fun MainPrayersScreen(
                     }
                 }
             )
-        },
-        modifier = Modifier.verticalScroll(rememberScrollState())
+        }
     ) { paddingValues ->
         MainPrayersContent(
             modifier = Modifier.padding(paddingValues),
