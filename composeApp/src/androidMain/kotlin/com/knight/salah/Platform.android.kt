@@ -7,6 +7,9 @@ import android.os.Build
 import com.mmk.kmpnotifier.notification.NotifierManager
 import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
 import androidx.core.net.toUri
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import com.knight.salah.datastore.SettingDataStore
 import com.knight.salah.platform.NotificationManager
 import org.koin.core.module.Module
 import org.koin.dsl.module
@@ -39,4 +42,5 @@ actual fun onApplicationStartPlatformSpecific() {
 
 actual fun platformModule(): Module = module {
     single { NotificationManager(context = SalahApp.applicationContext()) }
+    single<DataStore<Preferences>> { SettingDataStore.createDataStore(SalahApp.applicationContext()) }
 }

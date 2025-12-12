@@ -1,5 +1,7 @@
 package com.knight.salah
 
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import com.knight.salah.platform.NotificationManager
 import com.mmk.kmpnotifier.notification.NotifierManager
 import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
@@ -32,4 +34,5 @@ actual fun onApplicationStartPlatformSpecific() {
 
 actual fun platformModule(): Module = module {
     single { NotificationManager() }
+    single<DataStore<Preferences>> { provideDataStore() }
 }

@@ -2,8 +2,10 @@ package com.knight.salah.di
 
 import com.knight.salah.data.MockSalahApi
 import com.knight.salah.data.SalahApi
+import com.knight.salah.data.datastore.SettingDataSource
 import com.knight.salah.domain.repoistory.RefreshPrayerUseCase
 import com.knight.salah.domain.repoistory.SalahRepository
+import com.knight.salah.domain.repoistory.SettingRepository
 import com.knight.salah.platformModule
 import com.knight.salah.presentation.screens.setting.SettingViewModel
 import com.knight.salah.presentation.screens.main.viewmodel.MainPrayerViewModel
@@ -28,8 +30,16 @@ val dataModule = module {
     }
 
 //    single<SalahApi> { ApiClient(get()) }
+
+    //DataSource
     single<SalahApi> { MockSalahApi() }
+    single { SettingDataSource(get()) }
+
+    //Repository
     single { SalahRepository(get()) }
+    single { SettingRepository(get()) }
+
+    //UseCase
     single { RefreshPrayerUseCase(get(),get()) }
 }
 

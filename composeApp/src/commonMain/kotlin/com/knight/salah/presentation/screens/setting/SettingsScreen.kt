@@ -27,6 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,7 +47,8 @@ fun SettingsScreen(
     viewModel: SettingViewModel = koinViewModel(),
     onBackClick: () -> Unit = {}
 ) {
-    var notificationsEnabled by remember { mutableStateOf(true) }
+    val state by viewModel.stateFlow.collectAsState()
+
     var locationEnabled by remember { mutableStateOf(true) }
     var darkModeEnabled by remember { mutableStateOf(false) }
     var soundEnabled by remember { mutableStateOf(true) }
@@ -79,9 +81,9 @@ fun SettingsScreen(
     ) { paddingValues ->
         SettingsContent(
             modifier = Modifier.padding(paddingValues),
-            notifications = true,
-            notificationsEnabled = {
-//                when (viewModel.permissionState) {
+            state = state,
+            notificationsEnabled = viewModel::setNotificationEnabled,
+            //                when (viewModel.permissionState) {
 //                    Granted -> {
 //                    }
 //
@@ -93,7 +95,6 @@ fun SettingsScreen(
 //                        viewModel.provideOrRequestNotification()
 //                    }
 //                }
-            },
             sound = soundEnabled,
             soundEnabled = { soundEnabled = it },
             location = locationEnabled,
@@ -110,7 +111,7 @@ fun SettingsScreen(
 @Composable
 private fun SettingsContent(
     modifier: Modifier = Modifier,
-    notifications: Boolean,
+    state: SettingState,
     notificationsEnabled: (Boolean) -> Unit,
     sound: Boolean,
     soundEnabled: (Boolean) -> Unit,
@@ -132,8 +133,8 @@ private fun SettingsContent(
                 icon = Icons.Default.Notifications,
                 title = "Prayer Notifications",
                 subtitle = "Get notified before prayer times",
-                isChecked = notifications,
-                onCheckedChange = { notificationsEnabled(it) }
+                isChecked = state.notificationEnabled,
+                onCheckedChange = notificationsEnabled
             )
 
             SettingsSwitchItem(

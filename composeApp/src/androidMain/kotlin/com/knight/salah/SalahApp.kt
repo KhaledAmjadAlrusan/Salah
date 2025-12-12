@@ -14,6 +14,10 @@ class SalahApp: Application() {
     override fun onCreate() {
         super.onCreate()
         instance = this
+        init()
+    }
+
+    private fun init(){
         AppInitializer.onApplicationStart()
         PrayerRefreshWorker.scheduleDailyPrayerRefresh(this)
     }
