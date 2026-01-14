@@ -1,10 +1,9 @@
 package com.knight.salah.presentation.screens.main.viewmodel.state
 
-import com.knight.salah.domain.model.PrayerTime
-import com.knight.salah.platform.NotificationManager
-import com.knight.salah.core.util.currentLocalTime
 import com.knight.salah.core.util.toLocalTimeOrNull
+import com.knight.salah.domain.model.PrayerTime
 import com.knight.salah.domain.model.buildPrayerNotificationsForDay
+import com.knight.salah.platform.NotificationManager
 import com.knight.salah.platform.NotificationSoundType
 import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.DayOfWeek
@@ -155,7 +154,9 @@ fun PrayerTime.schedulePrayerNotifications(
     notificationManager: NotificationManager,
     daysToSchedule: Int = 1,
     now: Instant = Clock.System.now(),
-    zone: TimeZone = TimeZone.currentSystemDefault()
+    zone: TimeZone = TimeZone.currentSystemDefault(),
+    athanSoundEnabled: Boolean,
+    iqamaSoundEnabled: Boolean
 ) {
     require(daysToSchedule >= 1)
 
@@ -169,7 +170,26 @@ fun PrayerTime.schedulePrayerNotifications(
             // For *today*, skip times already in the past
             if (date == today && n.triggerAt < now) return@forEach
             val isAthan = n.title.lowercase().endsWith("athan")
-            val sound = if (isAthan) NotificationSoundType.ADHAN else NotificationSoundType.IQAMA
+//            val sound = if (isAthan) NotificationSoundType.ADHAN else NotificationSoundType.IQAMA
+//            val sound = when {
+//                isAthan && athanSoundEnabled -> NotificationSoundType.ADHAN
+//                isAthan && !athanSoundEnabled -> NotificationSoundType.DEFAULT
+//                else -> NotificationSoundType.IQAMA
+//            }
+//            val sound = when {
+//                !athanSoundEnabled -> NotificationSoundType.DEFAULT
+//                isAthan -> NotificationSoundType.ADHAN
+//                else -> NotificationSoundType.IQAMA
+//            }
+            val sound = when {
+                isAthan && athanSoundEnabled -> NotificationSoundType.ADHAN
+                isAthan && !athanSoundEnabled -> NotificationSoundType.DEFAULT
+
+                !isAthan && iqamaSoundEnabled -> NotificationSoundType.IQAMA
+                !isAthan && !iqamaSoundEnabled -> NotificationSoundType.DEFAULT
+
+                else -> NotificationSoundType.DEFAULT
+            }
 
             notificationManager.scheduleNotification(
                 id = n.id,

@@ -8,7 +8,6 @@ import com.knight.salah.platform.NotificationManager
 import com.knight.salah.presentation.screens.main.viewmodel.state.PrayerState
 import com.knight.salah.presentation.screens.main.viewmodel.state.buildTodayLabel
 import com.knight.salah.presentation.screens.main.viewmodel.state.nextSwitchInstant
-import com.knight.salah.presentation.screens.main.viewmodel.state.schedulePrayerNotifications
 import com.knight.salah.presentation.screens.main.viewmodel.state.toPrayerRowsWithNext
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -47,7 +46,7 @@ class MainPrayerViewModel(
         currentPrayerTime = prayerTime
 
         // schedule for a week (7 days) as you had
-        prayerTime?.schedulePrayerNotifications(notificationManager, daysToSchedule = 7)
+        //prayerTime?.schedulePrayerNotifications(notificationManager, daysToSchedule = 7)
 
         _prayerState.update { state ->
             state.copy(

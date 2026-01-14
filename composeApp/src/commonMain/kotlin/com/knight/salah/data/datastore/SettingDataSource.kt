@@ -15,6 +15,11 @@ class SettingDataSource(
     companion object{
         //Notification key
         val NOTIFICATION_ENABLED = booleanPreferencesKey("notification_enabled")
+
+        // Adhan key
+        val ATHAN_SOUND_ENABLED = booleanPreferencesKey("athan_sound_enabled")
+        val IQAMA_SOUND_ENABLED = booleanPreferencesKey("iqama_sound_enabled")
+
     }
 
     //setters and getters as flow for notification
@@ -34,4 +39,37 @@ class SettingDataSource(
             it[NOTIFICATION_ENABLED] ?: false
         }
     }
+
+    suspend fun setAthanSoundEnabled(enabled: Boolean) {
+        withContext(Dispatchers.IO) {
+            dataStore.updateData {
+                it.toMutablePreferences().apply {
+                    set(ATHAN_SOUND_ENABLED, enabled)
+                }
+            }
+        }
+    }
+
+    fun getAdhanSoundEnabled(): Flow<Boolean> {
+        return dataStore.data.map {
+            it[ATHAN_SOUND_ENABLED] ?: false
+        }
+    }
+
+    suspend fun setIqamaSoundEnabled(enabled: Boolean) {
+        withContext(Dispatchers.IO) {
+            dataStore.updateData {
+                it.toMutablePreferences().apply {
+                    set(IQAMA_SOUND_ENABLED, enabled)
+                }
+            }
+        }
+    }
+
+    fun getIqamaSoundEnabled(): Flow<Boolean> {
+        return dataStore.data.map {
+            it[IQAMA_SOUND_ENABLED] ?: false
+        }
+    }
+
 }

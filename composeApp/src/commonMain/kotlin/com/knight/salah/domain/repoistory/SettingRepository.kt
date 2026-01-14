@@ -9,8 +9,22 @@ class SettingRepository(
     suspend fun setNotificationEnabled(enabled: Boolean){
         dataSource.setNotificationEnabled(enabled)
     }
-
     fun getNotificationEnabled(): Flow<Boolean> {
         return dataSource.getNotificationEnabled()
+    }
+    suspend fun setAthanSoundEnabled(enabled: Boolean) {
+        dataSource.setAthanSoundEnabled(enabled)
+    }
+
+    fun getAthanSoundEnabled(): Flow<Boolean> {
+        return dataSource.getAdhanSoundEnabled()
+    }
+
+    suspend fun setIqamaSoundEnabled(enabled: Boolean) {
+        dataSource.setIqamaSoundEnabled(enabled)
+    }
+
+    fun getIqamaSoundEnabled(): Flow<Boolean> {
+        return dataSource.getIqamaSoundEnabled()
     }
 }

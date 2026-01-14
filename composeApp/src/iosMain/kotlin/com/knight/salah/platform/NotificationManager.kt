@@ -1,8 +1,28 @@
 package com.knight.salah.platform
 
 import kotlinx.datetime.toNSDate
-import platform.Foundation.*
-import platform.UserNotifications.*
+import platform.Foundation.NSBundle
+import platform.Foundation.NSCalendar
+import platform.Foundation.NSCalendarUnitDay
+import platform.Foundation.NSCalendarUnitHour
+import platform.Foundation.NSCalendarUnitMinute
+import platform.Foundation.NSCalendarUnitMonth
+import platform.Foundation.NSCalendarUnitYear
+import platform.Foundation.NSDateComponents
+import platform.Foundation.NSUUID
+import platform.UserNotifications.UNAuthorizationOptionAlert
+import platform.UserNotifications.UNAuthorizationOptionSound
+import platform.UserNotifications.UNCalendarNotificationTrigger
+import platform.UserNotifications.UNMutableNotificationContent
+import platform.UserNotifications.UNNotification
+import platform.UserNotifications.UNNotificationPresentationOptionAlert
+import platform.UserNotifications.UNNotificationPresentationOptionSound
+import platform.UserNotifications.UNNotificationPresentationOptions
+import platform.UserNotifications.UNNotificationRequest
+import platform.UserNotifications.UNNotificationResponse
+import platform.UserNotifications.UNNotificationSound
+import platform.UserNotifications.UNUserNotificationCenter
+import platform.UserNotifications.UNUserNotificationCenterDelegateProtocol
 import platform.darwin.NSObject
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
@@ -157,5 +177,8 @@ actual class NotificationManager {
                 withCompletionHandler()
             }
         }
+    }
+
+    actual fun cancelAllPrayerNotifications() {
     }
 }
