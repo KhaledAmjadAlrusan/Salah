@@ -14,6 +14,8 @@ import kotlinx.coroutines.launch
 class SettingViewModel(
     private val notificationManager: NotificationManager,
     private val repository: SettingRepository
+
+
 ) : ViewModel() {
 
     private val _stateFlow = MutableStateFlow(SettingState())
