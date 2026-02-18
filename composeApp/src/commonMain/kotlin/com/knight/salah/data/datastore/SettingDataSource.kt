@@ -50,6 +50,7 @@ class SettingDataSource(
         }
     }
 
+
     fun getAdhanSoundEnabled(): Flow<Boolean> {
         return dataStore.data.map {
             it[ATHAN_SOUND_ENABLED] ?: false
