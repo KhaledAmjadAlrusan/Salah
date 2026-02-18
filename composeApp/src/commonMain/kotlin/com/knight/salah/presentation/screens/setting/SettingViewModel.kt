@@ -2,7 +2,7 @@ package com.knight.salah.presentation.screens.setting
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.knight.salah.domain.repoistory.RefreshPrayerUseCase
+import com.knight.salah.core.worker.PrayerBgWorker.refreshPrayerUseCase
 import com.knight.salah.domain.repoistory.SettingRepository
 import com.knight.salah.platform.NotificationManager
 import com.knight.salah.platform.NotificationSoundType
@@ -10,10 +10,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
+
 class SettingViewModel(
     private val notificationManager: NotificationManager,
-    private val repository: SettingRepository,
-    private val refreshPrayerUseCase: RefreshPrayerUseCase
+    private val repository: SettingRepository
+
+
 ) : ViewModel() {
 
     private val _stateFlow = MutableStateFlow(SettingState())
@@ -39,31 +41,27 @@ class SettingViewModel(
             soundType = NotificationSoundType.ADHAN
         )
     }
-
     fun setNotificationEnabled(enabled: Boolean) {
         viewModelScope.launch {
             repository.setNotificationEnabled(enabled)
-
-            if (!enabled) {
-                repository.setAthanSoundEnabled(false)
-                repository.setIqamaSoundEnabled(false)
-            }
-
-            refreshPrayerUseCase.suspendedRefreshPrayerTimesAndSchedule(daysToSchedule = 7)
+            // Refresh prayer times to apply the new setting
+            refreshPrayerUseCase.suspendedRefreshPrayerTimesAndSchedule()
         }
     }
 
     fun setAthanSoundEnabled(enabled: Boolean) {
         viewModelScope.launch {
             repository.setAthanSoundEnabled(enabled)
-            refreshPrayerUseCase.suspendedRefreshPrayerTimesAndSchedule(daysToSchedule = 7)
+            // Refresh prayer times to apply the new setting
+            refreshPrayerUseCase.suspendedRefreshPrayerTimesAndSchedule()
         }
     }
 
     fun setIqamaSoundEnabled(enabled: Boolean) {
         viewModelScope.launch {
             repository.setIqamaSoundEnabled(enabled)
-            refreshPrayerUseCase.suspendedRefreshPrayerTimesAndSchedule(daysToSchedule = 7)
+            // Refresh prayer times to apply the new setting
+            refreshPrayerUseCase.suspendedRefreshPrayerTimesAndSchedule()
         }
     }
 

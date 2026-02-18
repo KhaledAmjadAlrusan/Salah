@@ -3,50 +3,74 @@ package com.knight.salah.data.datastore
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
-import androidx.datastore.preferences.core.edit
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 
 class SettingDataSource(
     private val dataStore: DataStore<Preferences>
 ) {
-    private val NOTIFICATION_ENABLED_KEY = booleanPreferencesKey("notification_enabled")
-    private val ATHAN_SOUND_ENABLED_KEY = booleanPreferencesKey("athan_sound_enabled")
-    private val IQAMA_SOUND_ENABLED_KEY = booleanPreferencesKey("iqama_sound_enabled")
+    companion object{
+        //Notification key
+        val NOTIFICATION_ENABLED = booleanPreferencesKey("notification_enabled")
 
-    suspend fun setNotificationEnabled(enabled: Boolean) {
-        dataStore.edit { preferences ->
-            preferences[NOTIFICATION_ENABLED_KEY] = enabled
+        // Adhan key
+        val ATHAN_SOUND_ENABLED = booleanPreferencesKey("athan_sound_enabled")
+        val IQAMA_SOUND_ENABLED = booleanPreferencesKey("iqama_sound_enabled")
+
+    }
+
+    //setters and getters as flow for notification
+    suspend fun setNotificationEnabled(enabled: Boolean)
+    {
+        withContext(Dispatchers.IO){
+            dataStore.updateData {
+                it.toMutablePreferences().apply {
+                    set(NOTIFICATION_ENABLED, enabled)
+                }
+            }
         }
     }
 
-    fun getNotificationEnabled(): Flow<Boolean> {
-        return dataStore.data.map { preferences ->
-            preferences[NOTIFICATION_ENABLED_KEY] ?: false
+    fun getNotificationEnabled(): Flow<Boolean>{
+        return dataStore.data.map {
+            it[NOTIFICATION_ENABLED] ?: false
         }
     }
 
     suspend fun setAthanSoundEnabled(enabled: Boolean) {
-        dataStore.edit { preferences ->
-            preferences[ATHAN_SOUND_ENABLED_KEY] = enabled
+        withContext(Dispatchers.IO) {
+            dataStore.updateData {
+                it.toMutablePreferences().apply {
+                    set(ATHAN_SOUND_ENABLED, enabled)
+                }
+            }
         }
     }
 
-    fun getAthanSoundEnabled(): Flow<Boolean> {
-        return dataStore.data.map { preferences ->
-            preferences[ATHAN_SOUND_ENABLED_KEY] ?: true
+
+    fun getAdhanSoundEnabled(): Flow<Boolean> {
+        return dataStore.data.map {
+            it[ATHAN_SOUND_ENABLED] ?: false
         }
     }
 
     suspend fun setIqamaSoundEnabled(enabled: Boolean) {
-        dataStore.edit { preferences ->
-            preferences[IQAMA_SOUND_ENABLED_KEY] = enabled
+        withContext(Dispatchers.IO) {
+            dataStore.updateData {
+                it.toMutablePreferences().apply {
+                    set(IQAMA_SOUND_ENABLED, enabled)
+                }
+            }
         }
     }
 
     fun getIqamaSoundEnabled(): Flow<Boolean> {
-        return dataStore.data.map { preferences ->
-            preferences[IQAMA_SOUND_ENABLED_KEY] ?: true
+        return dataStore.data.map {
+            it[IQAMA_SOUND_ENABLED] ?: false
         }
     }
+
 }
