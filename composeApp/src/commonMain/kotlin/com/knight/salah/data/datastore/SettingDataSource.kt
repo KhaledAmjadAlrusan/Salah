@@ -44,6 +44,8 @@ class SettingDataSource(
         }
     }
 
+
+
     fun getIqamaSoundEnabled(): Flow<Boolean> {
         return dataStore.data.map { preferences ->
             preferences[IQAMA_SOUND_ENABLED_KEY] ?: true
