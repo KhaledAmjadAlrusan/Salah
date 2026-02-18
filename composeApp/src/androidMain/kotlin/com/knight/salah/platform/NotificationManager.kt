@@ -27,6 +27,8 @@ actual class NotificationManager(
     private val alarmManager get() =
         context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
+    private val prefs get() = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+
     @SuppressLint("MissingPermission")
     actual fun showNotification(
         title: String,
@@ -79,6 +81,8 @@ actual class NotificationManager(
             triggerMillis,
             pendingIntent
         )
+
+        saveScheduledNotificationId(id)
     }
 
     actual fun cancelScheduledNotification(id: String) {
@@ -90,6 +94,19 @@ actual class NotificationManager(
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
         alarmManager.cancel(pendingIntent)
+        pendingIntent.cancel()
+
+        removeScheduledNotificationId(id)
+    }
+
+    actual fun cancelAllPrayerNotifications() {
+        val scheduledIds = getScheduledNotificationIds()
+
+        scheduledIds.forEach { id ->
+            cancelScheduledNotification(id)
+        }
+
+        clearScheduledNotificationIds()
     }
 
     private val areNotificationEnabled get() =
@@ -148,11 +165,33 @@ actual class NotificationManager(
         systemNotificationManager.createNotificationChannel(channel)
     }
 
+    private fun saveScheduledNotificationId(id: String) {
+        val currentIds = getScheduledNotificationIds().toMutableSet()
+        currentIds.add(id)
+        prefs.edit().putStringSet(SCHEDULED_IDS_KEY, currentIds).apply()
+    }
+
+    private fun removeScheduledNotificationId(id: String) {
+        val currentIds = getScheduledNotificationIds().toMutableSet()
+        currentIds.remove(id)
+        prefs.edit().putStringSet(SCHEDULED_IDS_KEY, currentIds).apply()
+    }
+
+    private fun getScheduledNotificationIds(): Set<String> {
+        return prefs.getStringSet(SCHEDULED_IDS_KEY, emptySet()) ?: emptySet()
+    }
+
+    private fun clearScheduledNotificationIds() {
+        prefs.edit().remove(SCHEDULED_IDS_KEY).apply()
+    }
+
     companion object {
         const val CHANNEL_ID_DEFAULT = "prayer_default"
         const val CHANNEL_ID_ADHAN   = "prayer_adhan"
         const val CHANNEL_ID_IQAMA   = "prayer_iqama"
 
         private const val NOW_NOTIFICATION_ID = 1
+        private const val PREFS_NAME = "prayer_notifications"
+        private const val SCHEDULED_IDS_KEY = "scheduled_ids"
     }
 }

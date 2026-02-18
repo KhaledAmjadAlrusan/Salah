@@ -20,6 +20,7 @@ expect class NotificationManager {
     )
 
     fun cancelScheduledNotification(id: String)
+    fun cancelAllPrayerNotifications()
 }
 
 enum class NotificationSoundType {

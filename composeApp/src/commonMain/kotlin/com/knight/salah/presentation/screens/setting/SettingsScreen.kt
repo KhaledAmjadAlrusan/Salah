@@ -17,6 +17,7 @@ import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Speaker
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.VolumeDown
 import androidx.compose.material.icons.filled.VolumeUp
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -53,7 +54,6 @@ fun SettingsScreen(
     var darkModeEnabled by remember { mutableStateOf(false) }
     var soundEnabled by remember { mutableStateOf(true) }
 
-
     Scaffold(
         topBar = {
             TopAppBar(
@@ -83,27 +83,18 @@ fun SettingsScreen(
             modifier = Modifier.padding(paddingValues),
             state = state,
             notificationsEnabled = viewModel::setNotificationEnabled,
-            //                when (viewModel.permissionState) {
-//                    Granted -> {
-//                    }
-//
-//                    DeniedAlways -> {
-//                        controller.openAppSettings()
-//                    }
-//
-//                    else -> {
-//                        viewModel.provideOrRequestNotification()
-//                    }
-//                }
-            sound = soundEnabled,
-            soundEnabled = { soundEnabled = it },
             location = locationEnabled,
+            adhanSoundEnabled = viewModel::setAthanSoundEnabled,
             locationEnabled = { locationEnabled = it },
             darkMode = darkModeEnabled,
             darkModeEnabled = { darkModeEnabled = it },
             showNotification = {
                 viewModel.showNotification()
-            }
+            },
+            startAdhan = {
+                viewModel.startAdhan()
+            },
+            iqamaSoundEnabled = viewModel::setIqamaSoundEnabled,
         )
     }
 }
@@ -113,13 +104,14 @@ private fun SettingsContent(
     modifier: Modifier = Modifier,
     state: SettingState,
     notificationsEnabled: (Boolean) -> Unit,
-    sound: Boolean,
-    soundEnabled: (Boolean) -> Unit,
+    adhanSoundEnabled: (Boolean) -> Unit,
+    iqamaSoundEnabled: (Boolean) -> Unit,
     location: Boolean,
     locationEnabled: (Boolean) -> Unit,
     darkMode: Boolean,
     darkModeEnabled: (Boolean) -> Unit,
-    showNotification: () -> Unit
+    showNotification: () -> Unit,
+    startAdhan: () -> Unit,
 ) {
     Column(
         modifier = modifier
@@ -127,7 +119,6 @@ private fun SettingsContent(
             .background(MaterialTheme.colorScheme.background)
             .verticalScroll(rememberScrollState())
     ) {
-        // Prayer Settings Section
         SettingsSection(title = "Prayer Settings") {
             SettingsSwitchItem(
                 icon = Icons.Default.Notifications,
@@ -141,19 +132,28 @@ private fun SettingsContent(
                 icon = Icons.Default.VolumeUp,
                 title = "Adhan Sound",
                 subtitle = "Play adhan sound for prayers",
-                isChecked = sound,
-                onCheckedChange = { soundEnabled(it) }
+                isChecked = state.adhanSoundEnabled,
+                onCheckedChange = adhanSoundEnabled,
+                enabled = state.notificationEnabled
+            )
+
+            SettingsSwitchItem(
+                icon = Icons.Default.VolumeDown,
+                title = "Iqama Sound",
+                subtitle = "Play iqama sound for prayers",
+                isChecked = state.iqamaSoundEnabled,
+                onCheckedChange = iqamaSoundEnabled,
+                enabled = state.notificationEnabled
             )
 
             SettingsItem(
                 icon = Icons.Default.Language,
                 title = "Language",
                 subtitle = "English",
-                onClick = { /* Open calculation method dialog */ }
+                onClick = { }
             )
         }
 
-        // Location Settings Section
         SettingsSection(title = "Location") {
             SettingsSwitchItem(
                 icon = Icons.Default.LocationOn,
@@ -167,11 +167,10 @@ private fun SettingsContent(
                 icon = Icons.Default.LocationSearching,
                 title = "Manual Location",
                 subtitle = "Set your location manually",
-                onClick = { /* Open location selection */ }
+                onClick = { }
             )
         }
 
-        // Appearance Section
         SettingsSection(title = "Appearance") {
             SettingsSwitchItem(
                 icon = Icons.Default.BrightnessMedium,
@@ -182,58 +181,46 @@ private fun SettingsContent(
             )
         }
 
-        // More Section
         SettingsSection(title = "More") {
             SettingsItem(
                 icon = Icons.Default.Info,
                 title = "About App",
                 subtitle = "Version 1.0.0",
-                onClick = { /* Open about screen */ }
+                onClick = { }
             )
 
             SettingsItem(
                 icon = Icons.Default.Share,
                 title = "Share App",
                 subtitle = "Share with friends and family",
-                onClick = { /* Share app */ }
+                onClick = { }
             )
 
             SettingsItem(
                 icon = Icons.Default.Star,
                 title = "Rate App",
                 subtitle = "Rate us on Play Store",
-                onClick = { /* Rate app */ }
+                onClick = { }
             )
         }
 
-        // Prayer Settings Section
         SettingsSection(title = "Debug testing") {
-
             SettingsItem(
                 icon = Icons.Default.Speaker,
                 title = "Test Notification",
-                subtitle = "Debug",
-                onClick = {
-//                    val notifier = NotifierManager.getLocalNotifier()
-//                    notifier.notify {
-//                        id= Random.nextInt(0, Int.MAX_VALUE)
-//                        title = "Title from KMPNotifier"
-//                        body = "Body message from KMPNotifier"
-//                        payloadData = mapOf(
-//                            com.mmk.kmpnotifier.notification.Notifier.KEY_URL to "https://github.com/mirzemehdi/KMPNotifier/",
-//                            "extraKey" to "randomValue"
-//                        )
-//                        image = NotificationImage.Url("https://github.com/user-attachments/assets/a0f38159-b31d-4a47-97a7-cc230e15d30b")
-//                    }
+                subtitle = "Instant notification test",
+                onClick = { showNotification() }
+            )
 
-                    showNotification()
-                }
+            SettingsItem(
+                icon = Icons.Default.Speaker,
+                title = "Test Adhan",
+                subtitle = "Instant adhan sound test",
+                onClick = { startAdhan() }
             )
         }
-
     }
 }
-
 
 @Preview
 @Composable

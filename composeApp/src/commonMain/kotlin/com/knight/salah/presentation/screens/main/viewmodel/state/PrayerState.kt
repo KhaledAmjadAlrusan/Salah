@@ -1,10 +1,9 @@
 package com.knight.salah.presentation.screens.main.viewmodel.state
 
-import com.knight.salah.domain.model.PrayerTime
-import com.knight.salah.platform.NotificationManager
-import com.knight.salah.core.util.currentLocalTime
 import com.knight.salah.core.util.toLocalTimeOrNull
+import com.knight.salah.domain.model.PrayerTime
 import com.knight.salah.domain.model.buildPrayerNotificationsForDay
+import com.knight.salah.platform.NotificationManager
 import com.knight.salah.platform.NotificationSoundType
 import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.DayOfWeek
@@ -20,23 +19,21 @@ import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
-
 data class PrayerState(
     val rows: List<PrayerRow> = emptyList(),
-    val date:String = "",
+    val date: String = "",
+    val mosqueName: String = "",
     val isLoading: Boolean = false
 )
 
 data class PrayerRow(
     val name: String,
-    val athan: LocalTime?,   // Adhan
-    val iqama: LocalTime?,   // Iqama
+    val athan: LocalTime?,
+    val iqama: LocalTime?,
     val isNextPrayer: Boolean = false
 )
 
-
-private fun PrayerTime.buildPrayerRows(
-): List<PrayerRow> {
+private fun PrayerTime.buildPrayerRows(): List<PrayerRow> {
     val rows = mutableListOf<PrayerRow>()
 
     rows += PrayerRow(
@@ -65,7 +62,6 @@ private fun PrayerTime.buildPrayerRows(
         iqama = prayers.isha.iqama.toLocalTimeOrNull()
     )
 
-    // Always show Jumuah rows too
     prayers.jumuahPrayer.forEachIndexed { index, j ->
         val label = if (prayers.jumuahPrayer.size > 1) "Jumu'ah ${index + 1}" else "Jumu'ah"
         rows += PrayerRow(
@@ -78,7 +74,6 @@ private fun PrayerTime.buildPrayerRows(
     return rows
 }
 
-// overload using Instant, for the watcher
 @OptIn(ExperimentalTime::class)
 fun PrayerTime.toPrayerRowsWithNext(
     now: Instant = Clock.System.now(),
@@ -89,26 +84,19 @@ fun PrayerTime.toPrayerRowsWithNext(
     val time = dt.time
 
     val rows = buildPrayerRows()
-    return rows.markNextPrayer(time,date)
+    return rows.markNextPrayer(time, date)
 }
 
-
-// Extension on List<PrayerRow> to mark which one is next
 fun List<PrayerRow>.markNextPrayer(
     now: LocalTime,
     date: LocalDate
 ): List<PrayerRow> {
     val isFriday = date.dayOfWeek == DayOfWeek.FRIDAY
 
-    // Only consider some rows as "eligible" for highlighting
     val eligible = filter { row ->
         when {
-            // On Friday -> don't highlight Dhuhr
             isFriday && row.name.startsWith("Dhuhr", ignoreCase = true) -> false
-
-            // On non-Friday -> don't highlight any Jumu'ah rows
             !isFriday && row.name.startsWith("Jumu'ah", ignoreCase = true) -> false
-
             else -> true
         }
     }
@@ -132,7 +120,6 @@ fun List<PrayerRow>.markNextPrayer(
     }
 }
 
-
 @OptIn(ExperimentalTime::class)
 fun PrayerTime.nextSwitchInstant(
     now: Instant,
@@ -155,7 +142,9 @@ fun PrayerTime.schedulePrayerNotifications(
     notificationManager: NotificationManager,
     daysToSchedule: Int = 1,
     now: Instant = Clock.System.now(),
-    zone: TimeZone = TimeZone.currentSystemDefault()
+    zone: TimeZone = TimeZone.currentSystemDefault(),
+    athanSoundEnabled: Boolean,
+    iqamaSoundEnabled: Boolean
 ) {
     require(daysToSchedule >= 1)
 
@@ -166,10 +155,15 @@ fun PrayerTime.schedulePrayerNotifications(
         val dayNotifications = buildPrayerNotificationsForDay(date, zone)
 
         dayNotifications.forEach { n ->
-            // For *today*, skip times already in the past
             if (date == today && n.triggerAt < now) return@forEach
             val isAthan = n.title.lowercase().endsWith("athan")
-            val sound = if (isAthan) NotificationSoundType.ADHAN else NotificationSoundType.IQAMA
+            val sound = when {
+                isAthan && athanSoundEnabled -> NotificationSoundType.ADHAN
+                isAthan && !athanSoundEnabled -> NotificationSoundType.DEFAULT
+                !isAthan && iqamaSoundEnabled -> NotificationSoundType.IQAMA
+                !isAthan && !iqamaSoundEnabled -> NotificationSoundType.DEFAULT
+                else -> NotificationSoundType.DEFAULT
+            }
 
             notificationManager.scheduleNotification(
                 id = n.id,
@@ -181,7 +175,6 @@ fun PrayerTime.schedulePrayerNotifications(
         }
     }
 }
-
 
 private val monthNames = mapOf(
     Month.JANUARY to "January",

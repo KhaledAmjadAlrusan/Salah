@@ -40,7 +40,10 @@ val dataModule = module {
     single { SettingRepository(get()) }
 
     //UseCase
-    single { RefreshPrayerUseCase(get(),get()) }
+    single { RefreshPrayerUseCase(
+        get(), get(),
+        notificationManager = get()
+    ) }
 }
 
 val viewModelModule = module {

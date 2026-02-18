@@ -1,8 +1,28 @@
 package com.knight.salah.platform
 
 import kotlinx.datetime.toNSDate
-import platform.Foundation.*
-import platform.UserNotifications.*
+import platform.Foundation.NSBundle
+import platform.Foundation.NSCalendar
+import platform.Foundation.NSCalendarUnitDay
+import platform.Foundation.NSCalendarUnitHour
+import platform.Foundation.NSCalendarUnitMinute
+import platform.Foundation.NSCalendarUnitMonth
+import platform.Foundation.NSCalendarUnitYear
+import platform.Foundation.NSDateComponents
+import platform.Foundation.NSUUID
+import platform.UserNotifications.UNAuthorizationOptionAlert
+import platform.UserNotifications.UNAuthorizationOptionSound
+import platform.UserNotifications.UNCalendarNotificationTrigger
+import platform.UserNotifications.UNMutableNotificationContent
+import platform.UserNotifications.UNNotification
+import platform.UserNotifications.UNNotificationPresentationOptionAlert
+import platform.UserNotifications.UNNotificationPresentationOptionSound
+import platform.UserNotifications.UNNotificationPresentationOptions
+import platform.UserNotifications.UNNotificationRequest
+import platform.UserNotifications.UNNotificationResponse
+import platform.UserNotifications.UNNotificationSound
+import platform.UserNotifications.UNUserNotificationCenter
+import platform.UserNotifications.UNUserNotificationCenterDelegateProtocol
 import platform.darwin.NSObject
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
@@ -10,7 +30,6 @@ import kotlin.time.Instant
 private const val TAG = "[iOS NotificationManager]"
 
 actual class NotificationManager {
-
     private val center = UNUserNotificationCenter.currentNotificationCenter()
 
     init {
@@ -36,10 +55,8 @@ actual class NotificationManager {
             setBody(description)
             setSound(sound)
         }
-
         val uuid = NSUUID.UUID().UUIDString()
         val request = UNNotificationRequest.requestWithIdentifier(uuid, content, null)
-
         setDelegateIfNeeded()
         center.addNotificationRequest(request) { error ->
             if (error != null) {
@@ -58,7 +75,6 @@ actual class NotificationManager {
     ) {
         val date = triggerAt.toNSDate()
         val calendar = NSCalendar.currentCalendar
-
         val comps = calendar.components(
             NSCalendarUnitYear or
                     NSCalendarUnitMonth or
@@ -67,23 +83,18 @@ actual class NotificationManager {
                     NSCalendarUnitMinute,
             fromDate = date
         ) as NSDateComponents
-
         val sound = soundForType(soundType)
         val content = UNMutableNotificationContent().apply {
             setTitle(title)
             setBody(description)
             setSound(sound)
         }
-
         val trigger = UNCalendarNotificationTrigger.triggerWithDateMatchingComponents(
             comps,
             repeats = false
         )
-
         val request = UNNotificationRequest.requestWithIdentifier(id, content, trigger)
-
         setDelegateIfNeeded()
-
         center.addNotificationRequest(request) { error ->
             if (error != null) {
                 println("$TAG scheduleNotification() addNotificationRequest error=$error")
@@ -95,14 +106,16 @@ actual class NotificationManager {
         center.removePendingNotificationRequestsWithIdentifiers(listOf(id))
     }
 
+    actual fun cancelAllPrayerNotifications() {
+        center.removeAllPendingNotificationRequests()
+    }
+
     private fun soundForType(type: NotificationSoundType): UNNotificationSound? {
         val bundle = NSBundle.mainBundle
-
         return when (type) {
             NotificationSoundType.DEFAULT -> {
                 UNNotificationSound.defaultSound()
             }
-
             NotificationSoundType.ADHAN -> {
                 val path = bundle.pathForResource("adhan_short", "caf")
                 if (path == null) {
@@ -111,7 +124,6 @@ actual class NotificationManager {
                     UNNotificationSound.soundNamed("adhan_short.caf")
                 }
             }
-
             NotificationSoundType.IQAMA -> {
                 val path = bundle.pathForResource("iqama_short", "caf")
                 if (path == null) {
@@ -123,17 +135,14 @@ actual class NotificationManager {
         }
     }
 
-
-    // reuse one delegate
     private var delegateSet = false
+
     private fun setDelegateIfNeeded() {
         if (delegateSet) {
             return
         }
         delegateSet = true
-
         center.delegate = object : NSObject(), UNUserNotificationCenterDelegateProtocol {
-
             override fun userNotificationCenter(
                 center: UNUserNotificationCenter,
                 willPresentNotification: UNNotification,
