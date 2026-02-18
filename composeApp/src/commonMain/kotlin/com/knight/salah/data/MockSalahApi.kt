@@ -24,7 +24,9 @@ private fun getMockPrayerTime(): PrayerTime {
         ),
         updatedAt = "2025-12-07T20:36:32.927174Z",
         prayers = Prayers(
-            fajr = DailyPrayer(athan = "06:02", iqama = "06:30"),
+            fajr = DailyPrayer(athan = "00:02", iqama = "00:03"),
+
+//            fajr = DailyPrayer(athan = "06:02", iqama = "06:30"),
             sunrise = "07:51",
             dhuhr = DailyPrayer(athan = "12:06", iqama = "12:45"),
             asr = DailyPrayer(athan = "14:00", iqama = "15:00"),

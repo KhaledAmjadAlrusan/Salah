@@ -6,20 +6,18 @@ import kotlinx.coroutines.flow.Flow
 class SettingRepository(
     private val dataSource: SettingDataSource
 ) {
-    suspend fun setNotificationEnabled(enabled: Boolean) {
+    suspend fun setNotificationEnabled(enabled: Boolean){
         dataSource.setNotificationEnabled(enabled)
     }
-
     fun getNotificationEnabled(): Flow<Boolean> {
         return dataSource.getNotificationEnabled()
     }
-
     suspend fun setAthanSoundEnabled(enabled: Boolean) {
         dataSource.setAthanSoundEnabled(enabled)
     }
 
     fun getAthanSoundEnabled(): Flow<Boolean> {
-        return dataSource.getAthanSoundEnabled()
+        return dataSource.getAdhanSoundEnabled()
     }
 
     suspend fun setIqamaSoundEnabled(enabled: Boolean) {

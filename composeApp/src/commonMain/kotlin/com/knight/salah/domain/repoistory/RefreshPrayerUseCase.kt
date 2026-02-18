@@ -36,16 +36,19 @@ class RefreshPrayerUseCase(
     private suspend fun reschedule(daysToSchedule: Int) {
         val prayerTime = salahRepository.getPrayers() ?: return
 
-        val notificationEnabled = settingRepository.getNotificationEnabled().first()
-        val athanEnabled = settingRepository.getAthanSoundEnabled().first()
-        val iqamaEnabled = settingRepository.getIqamaSoundEnabled().first()
+        val notificationEnabled =
+            settingRepository.getNotificationEnabled().first()
+        val athanEnabled =
+            settingRepository.getAthanSoundEnabled().first()
+        val iqamaEnabled =
+            settingRepository.getIqamaSoundEnabled().first()
 
         notificationManager.cancelAllPrayerNotifications()
 
-        if (!notificationEnabled) {
+        // If ALL three are disabled, don't schedule anything
+        if (!notificationEnabled && !athanEnabled && !iqamaEnabled) {
             return
         }
-
         prayerTime.schedulePrayerNotifications(
             notificationManager = notificationManager,
             daysToSchedule = daysToSchedule,
@@ -53,4 +56,6 @@ class RefreshPrayerUseCase(
             iqamaSoundEnabled = iqamaEnabled
         )
     }
+
+
 }
