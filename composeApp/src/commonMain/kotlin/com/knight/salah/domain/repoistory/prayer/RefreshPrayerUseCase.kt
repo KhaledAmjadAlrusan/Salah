@@ -35,7 +35,7 @@ class RefreshPrayerUseCase(
     }
 
     private suspend fun reschedule(daysToSchedule: Int) {
-        val prayerTime = salahRepository.getPrayers() ?: return
+        val prayerTime = salahRepository.getPrayers(daysToSchedule)
 
         val notificationEnabled = settingRepository.getNotificationEnabled().first()
         val athanEnabled = settingRepository.getAthanSoundEnabled().first()
@@ -46,12 +46,13 @@ class RefreshPrayerUseCase(
         if (!notificationEnabled) {
             return
         }
-
-        prayerTime.schedulePrayerNotifications(
-            notificationManager = notificationManager,
-            daysToSchedule = daysToSchedule,
-            athanSoundEnabled = athanEnabled,
-            iqamaSoundEnabled = iqamaEnabled
-        )
+        prayerTime.forEach {
+            it.schedulePrayerNotifications(
+                notificationManager = notificationManager,
+                daysToSchedule = 1,
+                athanSoundEnabled = athanEnabled,
+                iqamaSoundEnabled = iqamaEnabled
+            )
+        }
     }
 }

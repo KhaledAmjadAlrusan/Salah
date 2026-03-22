@@ -2,7 +2,7 @@ package com.knight.salah.presentation.screens.main.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.knight.salah.domain.model.pryaer.PrayerTime
+import com.knight.salah.domain.model.pryaer.DailyPrayerTime
 import com.knight.salah.domain.repoistory.prayer.RefreshPrayerUseCase
 import com.knight.salah.domain.repoistory.prayer.SalahRepository
 import com.knight.salah.platform.NotificationManager
@@ -30,7 +30,7 @@ class MainPrayerViewModel(
     private val _prayerState = MutableStateFlow(PrayerState())
     val prayerState = _prayerState.asStateFlow()
 
-    private var currentPrayerTime: PrayerTime? = null
+    private var currentPrayerTime: DailyPrayerTime? = null
     private var watcherJob: Job? = null
 
     init {
@@ -43,21 +43,18 @@ class MainPrayerViewModel(
     @OptIn(ExperimentalTime::class)
     suspend fun getPrayerTime() {
         updateLoading(true)
-
-        val prayerTime = repository.getPrayers()
-        currentPrayerTime = prayerTime
-
-        refreshPrayerUseCase.suspendedRefreshPrayerTimesAndSchedule(daysToSchedule = 7)
-
-        _prayerState.update { state ->
-            state.copy(
-                rows = prayerTime?.toPrayerRowsWithNext() ?: emptyList(),
-                mosqueName = prayerTime?.name ?: "Select Mosque",
-                isLoading = false
-            )
+        repository.getPrayers().collect { prayerTime ->
+            currentPrayerTime = prayerTime
+            _prayerState.update { state ->
+                state.copy(
+                    rows = prayerTime?.toPrayerRowsWithNext() ?: emptyList(),
+                    mosqueName = prayerTime?.organizationId ?: "Select Mosque",
+                    isLoading = false
+                )
+            }
+            refreshPrayerUseCase.suspendedRefreshPrayerTimesAndSchedule(daysToSchedule = 7)
+            restartWatcher()
         }
-
-        restartWatcher()
     }
 
     @OptIn(ExperimentalTime::class)

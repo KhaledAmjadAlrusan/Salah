@@ -1,5 +1,3 @@
-import org.gradle.kotlin.dsl.implementation
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -17,7 +15,7 @@ kotlin {
             jvmTarget.set(JvmTarget.JVM_11)
         }
     }
-    
+
     listOf(
         iosArm64(),
         iosSimulatorArm64()
@@ -28,7 +26,7 @@ kotlin {
             export("io.github.mirzemehdi:kmpnotifier:1.6.0")
         }
     }
-    
+
     sourceSets {
         androidMain.dependencies {
             implementation(compose.preview)
@@ -36,6 +34,7 @@ kotlin {
             implementation(project.dependencies.platform("com.google.firebase:firebase-bom:34.6.0"))
             implementation(libs.firebase.analytics)
             implementation(libs.androidx.work.runtime.ktx)
+            implementation(libs.ktor.client.okhttp)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)

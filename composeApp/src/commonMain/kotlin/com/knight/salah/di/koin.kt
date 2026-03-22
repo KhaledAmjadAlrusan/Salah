@@ -1,11 +1,11 @@
 package com.knight.salah.di
 
+import com.knight.salah.data.ApiClient
 import com.knight.salah.data.datastore.mosue.MosqueDataSource
 import com.knight.salah.data.datastore.setting.SettingDataSource
 import com.knight.salah.data.mosque.MosqueApi
 import com.knight.salah.data.mosque.mock.MockMosqueApi
 import com.knight.salah.data.prayer.PrayerApi
-import com.knight.salah.data.prayer.mock.MockPrayerApi
 import com.knight.salah.domain.repoistory.mosque.MosqueRepository
 import com.knight.salah.domain.repoistory.prayer.RefreshPrayerUseCase
 import com.knight.salah.domain.repoistory.prayer.SalahRepository
@@ -16,7 +16,6 @@ import com.knight.salah.presentation.screens.search.viewmodel.SearchMosqueViewMo
 import com.knight.salah.presentation.screens.setting.viewmodel.SettingViewModel
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.http.ContentType
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import org.koin.core.context.startKoin
@@ -25,25 +24,27 @@ import org.koin.dsl.module
 
 val dataModule = module {
     single {
-        val json = Json { ignoreUnknownKeys = true }
+        val jsonConfig = Json {
+            ignoreUnknownKeys = true
+        }
+
         HttpClient {
             install(ContentNegotiation) {
-                // TODO Fix API so it serves application/json
-                json(json, contentType = ContentType.Any)
+                json(jsonConfig)
             }
         }
     }
 
-//    single<SalahApi> { ApiClient(get()) }
 
     //DataSource
-    single<PrayerApi> { MockPrayerApi() }
+    single<PrayerApi> { ApiClient(get()) }
+//    single<PrayerApi> { MockPrayerApi() }
     single<MosqueApi> { MockMosqueApi() }
     single { SettingDataSource(get()) }
     single { MosqueDataSource(get()) }
 
     //Repository
-    single { SalahRepository(get()) }
+    single { SalahRepository(get(), get()) }
     single { SettingRepository(get()) }
     single { MosqueRepository(get()) }
 

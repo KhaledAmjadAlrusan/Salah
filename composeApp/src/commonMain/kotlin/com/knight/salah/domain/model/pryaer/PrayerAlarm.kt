@@ -21,7 +21,7 @@ data class PrayerAlarm(
 
 
 @OptIn(ExperimentalTime::class)
-fun PrayerTime.buildAlarmsForToday(
+fun DailyPrayerTime.buildAlarmsForToday(
     now: Instant = Clock.System.now(),
     zone: TimeZone = TimeZone.currentSystemDefault()
 ): List<PrayerAlarm> {
@@ -54,16 +54,20 @@ fun PrayerTime.buildAlarmsForToday(
         }
     }
 
-    add("Fajr", prayers.fajr.athan, prayers.fajr.iqama)
-    add("Dhuhr", prayers.dhuhr.athan, prayers.dhuhr.iqama)
-    add("Asr", prayers.asr.athan, prayers.asr.iqama)
-    add("Maghrib", prayers.maghrib.athan, prayers.maghrib.iqama)
-    add("Isha", prayers.isha.athan, prayers.isha.iqama)
+    add("Fajr", fajrAzan, fajrIqamah)
+    add("Dhuhr", dhuhrAzan, dhuhrIqamah)
+    add("Asr", asrAzan, asrIqamah)
+    add("Maghrib", maghribAzan, maghribIqamah)
+    add("Isha", ishaAzan, ishaIqamah)
+    add("Jumu'ah", jumahTime1, jumahTime1)
 
     // Jumuah: use khutbah as “Athan”
-    prayers.jumuahPrayer.forEachIndexed { index, j ->
-        val name = if (prayers.jumuahPrayer.size > 1) "Jumu'ah ${index + 1}" else "Jumu'ah"
-        add(name, j.khutbah, j.iqama)
+    if (jumahTime2 != null) {
+        add("Jumu'ah", jumahTime2, jumahTime2)
+
+    }
+    if (jumahTime3 != null) {
+        add("Jumu'ah", jumahTime3, jumahTime3)
     }
 
     return alarms
