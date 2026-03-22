@@ -1,12 +1,13 @@
-package com.knight.salah.data
+package com.knight.salah.data.prayer.mock
 
-import com.knight.salah.domain.model.DailyPrayer
-import com.knight.salah.domain.model.JumuahPrayer
-import com.knight.salah.domain.model.PrayerTime
-import com.knight.salah.domain.model.Prayers
+import com.knight.salah.data.prayer.PrayerApi
 import com.knight.salah.domain.model.Source
+import com.knight.salah.domain.model.pryaer.DailyPrayer
+import com.knight.salah.domain.model.pryaer.JumuahPrayer
+import com.knight.salah.domain.model.pryaer.PrayerTime
+import com.knight.salah.domain.model.pryaer.Prayers
 
-class MockSalahApi : SalahApi {
+class MockPrayerApi : PrayerApi {
     override suspend fun getPrayerTime(): PrayerTime? {
         return getMockPrayerTime()
     }

@@ -17,4 +17,5 @@ fun provideDataStore() = DataStoreInitiator.createDataStore {
         error = null
     )
     requireNotNull(documentDir).path + "/${DataStoreInitiator.SETTING_DATA_STORE}"
+    requireNotNull(documentDir).path + "/${DataStoreInitiator.MOSQUE_DATA_STORE}"
 }

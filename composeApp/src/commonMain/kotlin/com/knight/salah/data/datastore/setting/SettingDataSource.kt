@@ -1,4 +1,4 @@
-package com.knight.salah.data.datastore
+package com.knight.salah.data.datastore.setting
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences

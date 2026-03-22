@@ -1,4 +1,4 @@
-package com.knight.salah.domain.model
+package com.knight.salah.domain.model.pryaer
 
 
 import kotlinx.serialization.SerialName

@@ -1,4 +1,4 @@
-package com.knight.salah.domain.model
+package com.knight.salah.domain.model.pryaer
 
 import com.knight.salah.core.util.toLocalTimeOrNull
 import kotlinx.datetime.DayOfWeek
@@ -59,10 +59,10 @@ fun PrayerTime.buildPrayerNotificationsForDay(
     }
 
     // Always
-    add("Fajr",    prayers.fajr.athan,    prayers.fajr.iqama)
-    add("Asr",     prayers.asr.athan,     prayers.asr.iqama)
+    add("Fajr", prayers.fajr.athan, prayers.fajr.iqama)
+    add("Asr", prayers.asr.athan, prayers.asr.iqama)
     add("Maghrib", prayers.maghrib.athan, prayers.maghrib.iqama)
-    add("Isha",    prayers.isha.athan,    prayers.isha.iqama)
+    add("Isha", prayers.isha.athan, prayers.isha.iqama)
 
     if (date.dayOfWeek == DayOfWeek.FRIDAY) {
         // Friday: Jumuah instead of Dhuhr

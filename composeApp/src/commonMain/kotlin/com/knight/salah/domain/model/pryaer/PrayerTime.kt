@@ -1,6 +1,7 @@
-package com.knight.salah.domain.model
+package com.knight.salah.domain.model.pryaer
 
 
+import com.knight.salah.domain.model.Source
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

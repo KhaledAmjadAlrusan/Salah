@@ -12,5 +12,5 @@ object DataStoreInitiator {
         )
 
     const val SETTING_DATA_STORE = "setting_data_store.preferences_pb"
-
+    const val MOSQUE_DATA_STORE = "mosque_data_store.preferences_pb"
 }

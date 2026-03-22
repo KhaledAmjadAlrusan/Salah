@@ -2,8 +2,8 @@ package com.knight.salah.presentation.screens.setting
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.knight.salah.domain.repoistory.RefreshPrayerUseCase
-import com.knight.salah.domain.repoistory.SettingRepository
+import com.knight.salah.domain.repoistory.prayer.RefreshPrayerUseCase
+import com.knight.salah.domain.repoistory.setting.SettingRepository
 import com.knight.salah.platform.NotificationManager
 import com.knight.salah.platform.NotificationSoundType
 import kotlinx.coroutines.flow.MutableStateFlow

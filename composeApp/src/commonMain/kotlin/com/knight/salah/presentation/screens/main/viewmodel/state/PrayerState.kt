@@ -1,8 +1,8 @@
 package com.knight.salah.presentation.screens.main.viewmodel.state
 
 import com.knight.salah.core.util.toLocalTimeOrNull
-import com.knight.salah.domain.model.PrayerTime
-import com.knight.salah.domain.model.buildPrayerNotificationsForDay
+import com.knight.salah.domain.model.pryaer.PrayerTime
+import com.knight.salah.domain.model.pryaer.buildPrayerNotificationsForDay
 import com.knight.salah.platform.NotificationManager
 import com.knight.salah.platform.NotificationSoundType
 import kotlinx.datetime.DatePeriod

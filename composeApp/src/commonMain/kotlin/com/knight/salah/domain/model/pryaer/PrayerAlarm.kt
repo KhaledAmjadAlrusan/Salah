@@ -1,4 +1,4 @@
-package com.knight.salah.domain.model
+package com.knight.salah.domain.model.pryaer
 
 import com.knight.salah.core.util.toLocalTimeOrNull
 import kotlinx.datetime.LocalDate
@@ -54,11 +54,11 @@ fun PrayerTime.buildAlarmsForToday(
         }
     }
 
-    add("Fajr",    prayers.fajr.athan,    prayers.fajr.iqama)
-    add("Dhuhr",   prayers.dhuhr.athan,   prayers.dhuhr.iqama)
-    add("Asr",     prayers.asr.athan,     prayers.asr.iqama)
+    add("Fajr", prayers.fajr.athan, prayers.fajr.iqama)
+    add("Dhuhr", prayers.dhuhr.athan, prayers.dhuhr.iqama)
+    add("Asr", prayers.asr.athan, prayers.asr.iqama)
     add("Maghrib", prayers.maghrib.athan, prayers.maghrib.iqama)
-    add("Isha",    prayers.isha.athan,    prayers.isha.iqama)
+    add("Isha", prayers.isha.athan, prayers.isha.iqama)
 
     // Jumuah: use khutbah as “Athan”
     prayers.jumuahPrayer.forEachIndexed { index, j ->

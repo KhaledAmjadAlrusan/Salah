@@ -1,13 +1,14 @@
 package com.knight.salah.data
 
-import com.knight.salah.domain.model.PrayerTime
+import com.knight.salah.data.prayer.PrayerApi
+import com.knight.salah.domain.model.pryaer.PrayerTime
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.utils.io.CancellationException
 
 
-class ApiClient(private val client: HttpClient) : SalahApi {
+class ApiClient(private val client: HttpClient) : PrayerApi {
     companion object {
         private const val API_URL =
             "https://raw.githubusercontent.com/Kotlin/KMP-App-Template/main/list.json"
