@@ -2,7 +2,7 @@ package com.knight.salah.domain.repoistory.prayer
 
 import com.knight.salah.domain.repoistory.setting.SettingRepository
 import com.knight.salah.platform.NotificationManager
-import com.knight.salah.presentation.screens.main.viewmodel.state.schedulePrayerNotifications
+import com.knight.salah.presentation.screens.main.data.schedulePrayerNotifications
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO

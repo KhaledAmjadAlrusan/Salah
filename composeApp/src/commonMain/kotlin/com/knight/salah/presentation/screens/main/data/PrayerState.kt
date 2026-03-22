@@ -1,4 +1,4 @@
-package com.knight.salah.presentation.screens.main.viewmodel.state
+package com.knight.salah.presentation.screens.main.data
 
 import com.knight.salah.core.util.toLocalTimeOrNull
 import com.knight.salah.domain.model.pryaer.PrayerTime

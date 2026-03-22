@@ -1,4 +1,4 @@
-package com.knight.salah.presentation.screens.setting
+package com.knight.salah.presentation.screens.setting.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -6,6 +6,7 @@ import com.knight.salah.domain.repoistory.prayer.RefreshPrayerUseCase
 import com.knight.salah.domain.repoistory.setting.SettingRepository
 import com.knight.salah.platform.NotificationManager
 import com.knight.salah.platform.NotificationSoundType
+import com.knight.salah.presentation.screens.setting.SettingState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -97,9 +98,3 @@ class SettingViewModel(
         }
     }
 }
-
-data class SettingState(
-    val notificationEnabled: Boolean = false,
-    val adhanSoundEnabled: Boolean = false,
-    val iqamaSoundEnabled: Boolean = false
-)

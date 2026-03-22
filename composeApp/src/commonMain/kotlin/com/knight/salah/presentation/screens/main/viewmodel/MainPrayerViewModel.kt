@@ -6,10 +6,10 @@ import com.knight.salah.domain.model.pryaer.PrayerTime
 import com.knight.salah.domain.repoistory.prayer.RefreshPrayerUseCase
 import com.knight.salah.domain.repoistory.prayer.SalahRepository
 import com.knight.salah.platform.NotificationManager
-import com.knight.salah.presentation.screens.main.viewmodel.state.PrayerState
-import com.knight.salah.presentation.screens.main.viewmodel.state.buildTodayLabel
-import com.knight.salah.presentation.screens.main.viewmodel.state.nextSwitchInstant
-import com.knight.salah.presentation.screens.main.viewmodel.state.toPrayerRowsWithNext
+import com.knight.salah.presentation.screens.main.data.PrayerState
+import com.knight.salah.presentation.screens.main.data.buildTodayLabel
+import com.knight.salah.presentation.screens.main.data.nextSwitchInstant
+import com.knight.salah.presentation.screens.main.data.toPrayerRowsWithNext
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow

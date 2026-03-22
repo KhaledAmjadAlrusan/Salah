@@ -39,6 +39,7 @@ import androidx.compose.ui.text.font.FontWeight
 import com.knight.salah.presentation.components.SettingsItem
 import com.knight.salah.presentation.components.SettingsSection
 import com.knight.salah.presentation.components.SettingsSwitchItem
+import com.knight.salah.presentation.screens.setting.viewmodel.SettingViewModel
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 

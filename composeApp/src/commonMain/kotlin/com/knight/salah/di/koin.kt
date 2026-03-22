@@ -13,7 +13,7 @@ import com.knight.salah.domain.repoistory.setting.SettingRepository
 import com.knight.salah.platformModule
 import com.knight.salah.presentation.screens.main.viewmodel.MainPrayerViewModel
 import com.knight.salah.presentation.screens.search.viewmodel.SearchMosqueViewModel
-import com.knight.salah.presentation.screens.setting.SettingViewModel
+import com.knight.salah.presentation.screens.setting.viewmodel.SettingViewModel
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.http.ContentType

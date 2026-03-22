@@ -7,7 +7,7 @@ import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.utils.io.CancellationException
 
-
+// Todo: Replace with real api
 class ApiClient(private val client: HttpClient) : PrayerApi {
     companion object {
         private const val API_URL =
