@@ -54,20 +54,20 @@ fun MosqueSearchResultItem(
                 modifier = Modifier.weight(1f)
             ) {
                 Text(
-                    text = mosque.name,
-                    style = MaterialTheme.typography.bodyLarge,
+                    text = mosque.name.trim(),
+                    style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.onSurface,
                     fontWeight = FontWeight.Medium,
                     fontSize = 16.sp
                 )
                 Text(
-                    text = mosque.city,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.surface,
+                    text = mosque.city.trim(),
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurface,
                     fontSize = 14.sp
                 )
                 Text(
-                    text = mosque.address,
+                    text = mosque.address.trim(),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.primary,
                     fontSize = 12.sp
