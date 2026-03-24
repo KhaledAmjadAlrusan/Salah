@@ -14,6 +14,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -34,33 +35,41 @@ class MainPrayerViewModel(
     private var watcherJob: Job? = null
 
     init {
-        buildDate()
-        viewModelScope.launch {
-            getPrayerTime()
-        }
-    }
-
-    @OptIn(ExperimentalTime::class)
-    suspend fun getPrayerTime() {
         updateLoading(true)
-        repository.getPrayers().collect { prayerTime ->
-            currentPrayerTime = prayerTime
-            _prayerState.update { state ->
-                state.copy(
-                    rows = prayerTime?.toPrayerRowsWithNext() ?: emptyList(),
-                    mosqueName = prayerTime?.organizationId ?: "Select Mosque",
-                    isLoading = false
-                )
-            }
-            refreshPrayerUseCase.suspendedRefreshPrayerTimesAndSchedule(daysToSchedule = 7)
-            restartWatcher()
+        observePrayerTime()
+    }
+
+    @OptIn(ExperimentalTime::class)
+    private fun observePrayerTime() {
+        viewModelScope.launch {
+            repository.getPrayers()
+                .collectLatest { prayerTime ->
+                    currentPrayerTime = prayerTime
+
+                    _prayerState.update { state ->
+                        state.copy(
+                            rows = prayerTime?.toPrayerRowsWithNext() ?: emptyList(),
+                            mosqueName = prayerTime?.organizationId ?: "Select Mosque",
+                            date = buildTodayLabel(),
+                            isLoading = false
+                        )
+                    }
+
+                    restartWatcher(prayerTime)
+
+                    if (prayerTime != null) {
+                        refreshPrayerUseCase.suspendedRefreshPrayerTimesAndSchedule(
+                            daysToSchedule = 7
+                        )
+                    }
+                }
         }
     }
 
     @OptIn(ExperimentalTime::class)
-    private fun restartWatcher() {
+    private fun restartWatcher(prayerTime: DailyPrayerTime?) {
         watcherJob?.cancel()
-        val prayerTime = currentPrayerTime ?: return
+        prayerTime ?: return
 
         watcherJob = viewModelScope.launch {
             val zone = TimeZone.currentSystemDefault()
@@ -68,25 +77,17 @@ class MainPrayerViewModel(
             while (isActive) {
                 val now = Clock.System.now()
 
-                val rowsNow = prayerTime.toPrayerRowsWithNext(now, zone)
-                _prayerState.update { it.copy(rows = rowsNow) }
+                _prayerState.update {
+                    it.copy(
+                        rows = prayerTime.toPrayerRowsWithNext(now, zone),
+                        date = buildTodayLabel(now, zone)
+                    )
+                }
 
                 val next = prayerTime.nextSwitchInstant(now, zone) ?: break
-
-                val delayMs = (next - now).inWholeMilliseconds
-                    .coerceAtLeast(0L)
-
+                val delayMs = (next - now).inWholeMilliseconds.coerceAtLeast(0L)
                 delay(delayMs)
             }
-        }
-    }
-
-    @OptIn(ExperimentalTime::class)
-    private fun buildDate() {
-        _prayerState.update { state ->
-            state.copy(
-                date = buildTodayLabel()
-            )
         }
     }
 

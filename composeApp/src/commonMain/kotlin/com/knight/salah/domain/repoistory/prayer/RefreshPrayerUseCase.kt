@@ -1,15 +1,22 @@
 package com.knight.salah.domain.repoistory.prayer
 
+import com.knight.salah.domain.model.pryaer.DailyPrayerTime
+import com.knight.salah.domain.model.pryaer.buildPrayerNotificationsForDay
 import com.knight.salah.domain.repoistory.setting.SettingRepository
 import com.knight.salah.platform.NotificationManager
-import com.knight.salah.presentation.screens.main.data.schedulePrayerNotifications
+import com.knight.salah.platform.NotificationSoundType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
 @OptIn(ExperimentalTime::class)
 class RefreshPrayerUseCase(
@@ -35,7 +42,7 @@ class RefreshPrayerUseCase(
     }
 
     private suspend fun reschedule(daysToSchedule: Int) {
-        val prayerTime = salahRepository.getPrayers(daysToSchedule)
+        val datedPrayerTimes = salahRepository.getPrayers(daysToSchedule)
 
         val notificationEnabled = settingRepository.getNotificationEnabled().first()
         val athanEnabled = settingRepository.getAthanSoundEnabled().first()
@@ -43,16 +50,47 @@ class RefreshPrayerUseCase(
 
         notificationManager.cancelAllPrayerNotifications()
 
-        if (!notificationEnabled) {
-            return
-        }
-        prayerTime.forEach {
-            it.schedulePrayerNotifications(
+        if (!notificationEnabled) return
+
+        datedPrayerTimes.forEach { datedPrayer ->
+            datedPrayer.prayer.schedulePrayerNotificationsForDate(
                 notificationManager = notificationManager,
-                daysToSchedule = 1,
+                date = datedPrayer.date,
                 athanSoundEnabled = athanEnabled,
                 iqamaSoundEnabled = iqamaEnabled
             )
         }
+    }
+}
+
+@OptIn(ExperimentalTime::class)
+fun DailyPrayerTime.schedulePrayerNotificationsForDate(
+    notificationManager: NotificationManager,
+    date: LocalDate,
+    now: Instant = Clock.System.now(),
+    zone: TimeZone = TimeZone.currentSystemDefault(),
+    athanSoundEnabled: Boolean,
+    iqamaSoundEnabled: Boolean
+) {
+    val today = now.toLocalDateTime(zone).date
+    val dayNotifications = buildPrayerNotificationsForDay(date, zone)
+
+    dayNotifications.forEach { notification ->
+        if (date == today && notification.triggerAt < now) return@forEach
+
+        val isAthan = notification.title.lowercase().endsWith("athan")
+        val sound = when {
+            isAthan && athanSoundEnabled -> NotificationSoundType.ADHAN
+            !isAthan && iqamaSoundEnabled -> NotificationSoundType.IQAMA
+            else -> NotificationSoundType.DEFAULT
+        }
+
+        notificationManager.scheduleNotification(
+            id = notification.id,
+            triggerAt = notification.triggerAt,
+            title = notification.title,
+            description = notification.body,
+            soundType = sound
+        )
     }
 }

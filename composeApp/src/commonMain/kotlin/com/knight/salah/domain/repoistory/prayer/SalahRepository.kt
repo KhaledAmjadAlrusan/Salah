@@ -3,10 +3,8 @@ package com.knight.salah.domain.repoistory.prayer
 import com.knight.salah.data.datastore.mosue.MosqueDataSource
 import com.knight.salah.data.prayer.PrayerApi
 import com.knight.salah.domain.model.pryaer.DailyPrayerTime
+import com.knight.salah.domain.model.pryaer.DatedPrayerTime
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.mapLatest
@@ -38,48 +36,39 @@ class SalahRepository(
         prayerDate: String = getTodaysDate()
     ): Flow<DailyPrayerTime?> {
         return dataStore.getSelectedMosqueId().mapLatest { organizationId ->
-            if (organizationId != null) {
+            organizationId?.let {
                 prayerApi.getPrayerTime(
-                    organizationId = organizationId,
+                    organizationId = it,
                     prayerDate = prayerDate
                 )
-            } else {
-                null
             }
         }
     }
 
-    @OptIn(ExperimentalTime::class, ExperimentalCoroutinesApi::class)
+    @OptIn(ExperimentalTime::class)
     suspend fun getPrayers(
         daysCount: Int,
         startDate: LocalDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
-    ): List<DailyPrayerTime> {
+    ): List<DatedPrayerTime> {
         require(daysCount > 0)
 
         val organizationId = dataStore.getSelectedMosqueId().first() ?: return emptyList()
-        return coroutineScope {
-            (0 until daysCount)
-                .map { offset ->
-                    async {
-                        val date = startDate.plus(offset, DateTimeUnit.DAY)
-                        prayerApi.getPrayerTime(
-                            organizationId = organizationId,
-                            prayerDate = date.toString()
-                        )
-                    }
-                }
-                .awaitAll()
-                .filterNotNull()
-                .sortedBy { it.prayerDate }
+
+        return (0 until daysCount).mapNotNull { offset ->
+            val date = startDate.plus(offset, DateTimeUnit.DAY)
+            val prayer = prayerApi.getPrayerTime(
+                organizationId = organizationId,
+                prayerDate = date.toString()
+            )
+            prayer?.let { DatedPrayerTime(date = date, prayer = it) }
         }
     }
 }
 
 @OptIn(ExperimentalTime::class)
 private fun getTodaysDate(): String {
-    val today = Clock.System.now()
+    return Clock.System.now()
         .toLocalDateTime(TimeZone.currentSystemDefault())
         .date
-
-    return today.toString() // format: YYYY-MM-DD
+        .toString() // format: YYYY-MM-DD
 }
