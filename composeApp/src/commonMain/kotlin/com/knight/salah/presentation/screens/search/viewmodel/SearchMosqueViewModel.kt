@@ -2,7 +2,6 @@ package com.knight.salah.presentation.screens.search.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.knight.salah.data.datastore.mosue.MosqueDataSource
 import com.knight.salah.domain.repoistory.mosque.MosqueRepository
 import com.knight.salah.presentation.screens.search.data.SearchMosqueEvent
 import com.knight.salah.presentation.screens.search.data.SearchMosqueState
@@ -13,11 +12,9 @@ import kotlinx.coroutines.launch
 
 class SearchMosqueViewModel(
     private val repository: MosqueRepository,
-    private val dataStore: MosqueDataSource
 ) : ViewModel() {
     private val _mosqueState = MutableStateFlow(SearchMosqueState())
     val prayerState = _mosqueState.asStateFlow()
-
 
     init {
         getMosques()
@@ -57,7 +54,7 @@ class SearchMosqueViewModel(
 
     private fun setSelectedMosqueId(id: String) {
         viewModelScope.launch {
-            dataStore.setSelectedMosqueId(id)
+            repository.setSelectedMosque(id)
         }
     }
 

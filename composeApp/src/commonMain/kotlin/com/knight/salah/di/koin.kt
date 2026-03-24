@@ -3,6 +3,9 @@ package com.knight.salah.di
 import com.knight.salah.data.ApiClient
 import com.knight.salah.data.datastore.mosue.MosqueDataSource
 import com.knight.salah.data.datastore.setting.SettingDataSource
+import com.knight.salah.data.local.PrayerTimeDao
+import com.knight.salah.data.local.SalahDatabase
+import com.knight.salah.data.local.createSalahDatabase
 import com.knight.salah.data.mosque.MosqueApi
 import com.knight.salah.data.mosque.mock.MockMosqueApi
 import com.knight.salah.data.prayer.PrayerApi
@@ -35,6 +38,8 @@ val dataModule = module {
         }
     }
 
+    single<SalahDatabase> { createSalahDatabase() }
+    single<PrayerTimeDao> { get<SalahDatabase>().prayerTimeDao() }
 
     //DataSource
     single<PrayerApi> { ApiClient(get()) }
@@ -44,9 +49,9 @@ val dataModule = module {
     single { MosqueDataSource(get()) }
 
     //Repository
-    single { SalahRepository(get(), get()) }
+    single { SalahRepository(get(), get(), get()) }
     single { SettingRepository(get()) }
-    single { MosqueRepository(get()) }
+    single { MosqueRepository(get(), get()) }
 
     //UseCase
     single {

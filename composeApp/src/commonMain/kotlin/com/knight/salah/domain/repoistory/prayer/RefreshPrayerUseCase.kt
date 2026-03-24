@@ -24,25 +24,34 @@ class RefreshPrayerUseCase(
     private val settingRepository: SettingRepository,
     private val notificationManager: NotificationManager
 ) {
-
     private val coroutineScope = CoroutineScope(
         SupervisorJob() + Dispatchers.IO
     )
 
-    fun refreshPrayerTimesAndSchedule(daysToSchedule: Int = 1) {
+    fun refreshPrayerTimesAndSchedule(
+        daysToSchedule: Int = 7,
+        forceRefresh: Boolean = false
+    ) {
         coroutineScope.launch {
-            reschedule(daysToSchedule)
+            reschedule(daysToSchedule, forceRefresh)
         }
     }
 
     suspend fun suspendedRefreshPrayerTimesAndSchedule(
-        daysToSchedule: Int = 1
+        daysToSchedule: Int = 7,
+        forceRefresh: Boolean = false
     ) {
-        reschedule(daysToSchedule)
+        reschedule(daysToSchedule, forceRefresh)
     }
 
-    private suspend fun reschedule(daysToSchedule: Int) {
-        val datedPrayerTimes = salahRepository.getPrayers(daysToSchedule)
+    private suspend fun reschedule(
+        daysToSchedule: Int,
+        forceRefresh: Boolean
+    ) {
+        val datedPrayerTimes = salahRepository.ensurePrayerRangeCached(
+            daysCount = daysToSchedule,
+            forceRefresh = forceRefresh
+        )
 
         val notificationEnabled = settingRepository.getNotificationEnabled().first()
         val athanEnabled = settingRepository.getAthanSoundEnabled().first()
