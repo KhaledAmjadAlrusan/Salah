@@ -1,4 +1,4 @@
-package com.knight.salah.domain.model.mosque
+package com.knight.salah.domain.model.remote.mosque
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

@@ -1,7 +1,7 @@
 package com.knight.salah.data.mosque.mock
 
 import com.knight.salah.data.mosque.MosqueApi
-import com.knight.salah.domain.model.mosque.AwqatMosque
+import com.knight.salah.domain.model.remote.mosque.AwqatMosque
 import kotlinx.serialization.json.Json
 
 

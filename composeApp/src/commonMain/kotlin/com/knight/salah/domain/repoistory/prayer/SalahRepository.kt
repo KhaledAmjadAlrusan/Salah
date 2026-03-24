@@ -2,8 +2,8 @@ package com.knight.salah.domain.repoistory.prayer
 
 import com.knight.salah.data.datastore.mosue.MosqueDataSource
 import com.knight.salah.data.prayer.PrayerApi
-import com.knight.salah.domain.model.pryaer.DailyPrayerTime
-import com.knight.salah.domain.model.pryaer.DatedPrayerTime
+import com.knight.salah.domain.model.remote.pryaer.DailyPrayerTime
+import com.knight.salah.domain.model.remote.pryaer.DatedPrayerTime
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first

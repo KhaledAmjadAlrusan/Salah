@@ -23,7 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.knight.salah.domain.model.mosque.AwqatMosque
+import com.knight.salah.domain.model.remote.mosque.AwqatMosque
 import com.knight.salah.presentation.components.MosqueSearchResultItem
 import com.knight.salah.presentation.components.SearchBar
 import com.knight.salah.presentation.screens.search.data.SearchMosqueEvent

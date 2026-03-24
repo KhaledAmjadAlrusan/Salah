@@ -1,4 +1,4 @@
-package com.knight.salah.domain.model.pryaer
+package com.knight.salah.domain.model.remote.pryaer
 
 import com.knight.salah.core.util.toLocalTimeOrNull
 import kotlinx.datetime.LocalDate

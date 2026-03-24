@@ -1,7 +1,7 @@
 package com.knight.salah.domain.repoistory.prayer
 
-import com.knight.salah.domain.model.pryaer.DailyPrayerTime
-import com.knight.salah.domain.model.pryaer.buildPrayerNotificationsForDay
+import com.knight.salah.domain.model.remote.pryaer.DailyPrayerTime
+import com.knight.salah.domain.model.remote.pryaer.buildPrayerNotificationsForDay
 import com.knight.salah.domain.repoistory.setting.SettingRepository
 import com.knight.salah.platform.NotificationManager
 import com.knight.salah.platform.NotificationSoundType

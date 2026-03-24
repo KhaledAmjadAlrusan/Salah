@@ -20,7 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.knight.salah.domain.model.mosque.AwqatMosque
+import com.knight.salah.domain.model.remote.mosque.AwqatMosque
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 

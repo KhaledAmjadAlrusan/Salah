@@ -1,6 +1,6 @@
 package com.knight.salah.data.prayer
 
-import com.knight.salah.domain.model.pryaer.DailyPrayerTime
+import com.knight.salah.domain.model.remote.pryaer.DailyPrayerTime
 
 interface PrayerApi {
     // Prayer Date formate 2023-03-21

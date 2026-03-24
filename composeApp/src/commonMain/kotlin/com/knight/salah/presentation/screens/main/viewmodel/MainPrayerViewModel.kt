@@ -2,7 +2,7 @@ package com.knight.salah.presentation.screens.main.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.knight.salah.domain.model.pryaer.DailyPrayerTime
+import com.knight.salah.domain.model.remote.pryaer.DailyPrayerTime
 import com.knight.salah.domain.repoistory.prayer.RefreshPrayerUseCase
 import com.knight.salah.domain.repoistory.prayer.SalahRepository
 import com.knight.salah.platform.NotificationManager
