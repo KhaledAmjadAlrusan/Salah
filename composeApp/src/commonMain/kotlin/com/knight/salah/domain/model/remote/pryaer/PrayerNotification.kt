@@ -63,22 +63,18 @@ fun DailyPrayerTime.buildPrayerNotificationsForDay(
     add("Asr", asrAzan, asrIqamah)
     add("Maghrib", maghribAzan, maghribIqamah)
     add("Isha", ishaAzan, ishaIqamah)
-    add("Jumu'ah", jumahTime1, jumahTime1)
 
     if (date.dayOfWeek == DayOfWeek.FRIDAY) {
-        // Friday: Jumuah instead of Dhuhr
+        add("Jumu'ah", jumahTime1, jumahTime1)
         if (jumahTime2 != null) {
             add("Jumu'ah", jumahTime2, jumahTime2)
-
         }
         if (jumahTime3 != null) {
             add("Jumu'ah", jumahTime3, jumahTime3)
         }
     } else {
-        // Other days: normal Dhuhr, no Jumuah
         add("Dhuhr", dhuhrAzan, dhuhrIqamah)
     }
 
     return result
 }
-
