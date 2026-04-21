@@ -1,4 +1,4 @@
-package com.knight.salah.domain.repoistory.setting
+package com.knight.salah.domain.repository.setting
 
 import com.knight.salah.data.datastore.setting.SettingDataSource
 import kotlinx.coroutines.flow.Flow

@@ -1,7 +1,7 @@
 package com.knight.salah.domain.model.mapper
 
 import com.knight.salah.domain.model.local.prayer.PrayerTimeEntity
-import com.knight.salah.domain.model.remote.pryaer.DailyPrayerTime
+import com.knight.salah.domain.model.remote.prayer.DailyPrayerTime
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 

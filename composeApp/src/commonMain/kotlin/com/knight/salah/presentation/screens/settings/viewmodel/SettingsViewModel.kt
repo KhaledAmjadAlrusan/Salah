@@ -1,23 +1,23 @@
-package com.knight.salah.presentation.screens.setting.viewmodel
+package com.knight.salah.presentation.screens.settings.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.knight.salah.domain.repoistory.prayer.RefreshPrayerUseCase
-import com.knight.salah.domain.repoistory.setting.SettingRepository
-import com.knight.salah.platform.NotificationManager
-import com.knight.salah.platform.NotificationSoundType
-import com.knight.salah.presentation.screens.setting.SettingState
+import com.knight.salah.domain.repository.prayer.RefreshPrayerUseCase
+import com.knight.salah.domain.repository.setting.SettingRepository
+import com.knight.salah.notifications.PrayerNotificationManager
+import com.knight.salah.notifications.PrayerNotificationSound
+import com.knight.salah.presentation.screens.settings.SettingsState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class SettingViewModel(
-    private val notificationManager: NotificationManager,
+class SettingsViewModel(
+    private val notificationManager: PrayerNotificationManager,
     private val repository: SettingRepository,
     private val refreshPrayerUseCase: RefreshPrayerUseCase
 ) : ViewModel() {
 
-    private val _stateFlow = MutableStateFlow(SettingState())
+    private val _stateFlow = MutableStateFlow(SettingsState())
     val stateFlow = _stateFlow.asStateFlow()
 
     init {
@@ -37,7 +37,7 @@ class SettingViewModel(
         notificationManager.showNotification(
             title = "Test Adhan",
             description = "Testing Adhan sound instantly",
-            soundType = NotificationSoundType.ADHAN
+            sound = PrayerNotificationSound.ADHAN
         )
     }
 

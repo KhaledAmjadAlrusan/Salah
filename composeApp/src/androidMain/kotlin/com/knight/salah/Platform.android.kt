@@ -11,7 +11,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.knight.salah.data.local.SalahDatabase
 import com.knight.salah.datastore.SettingDataStore
-import com.knight.salah.platform.NotificationManager
+import com.knight.salah.notifications.PrayerNotificationManager
 import com.mmk.kmpnotifier.notification.NotifierManager
 import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
 import org.koin.core.module.Module
@@ -53,6 +53,6 @@ actual fun getSalahDatabaseBuilder(): RoomDatabase.Builder<SalahDatabase> {
 }
 
 actual fun platformModule(): Module = module {
-    single { NotificationManager(context = SalahApp.applicationContext()) }
+    single { PrayerNotificationManager(context = SalahApp.applicationContext()) }
     single<DataStore<Preferences>> { SettingDataStore.createDataStore(SalahApp.applicationContext()) }
 }

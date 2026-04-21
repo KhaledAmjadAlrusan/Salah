@@ -1,10 +1,10 @@
-package com.knight.salah.domain.repoistory.prayer
+package com.knight.salah.domain.repository.prayer
 
-import com.knight.salah.domain.model.remote.pryaer.DailyPrayerTime
-import com.knight.salah.domain.model.remote.pryaer.buildPrayerNotificationsForDay
-import com.knight.salah.domain.repoistory.setting.SettingRepository
-import com.knight.salah.platform.NotificationManager
-import com.knight.salah.platform.NotificationSoundType
+import com.knight.salah.domain.model.remote.prayer.DailyPrayerTime
+import com.knight.salah.domain.model.remote.prayer.buildPrayerNotificationsForDay
+import com.knight.salah.domain.repository.setting.SettingRepository
+import com.knight.salah.notifications.PrayerNotificationManager
+import com.knight.salah.notifications.PrayerNotificationSound
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -22,7 +22,7 @@ import kotlin.time.Instant
 class RefreshPrayerUseCase(
     private val salahRepository: SalahRepository,
     private val settingRepository: SettingRepository,
-    private val notificationManager: NotificationManager
+    private val notificationManager: PrayerNotificationManager
 ) {
     private val coroutineScope = CoroutineScope(
         SupervisorJob() + Dispatchers.IO
@@ -74,7 +74,7 @@ class RefreshPrayerUseCase(
 
 @OptIn(ExperimentalTime::class)
 fun DailyPrayerTime.schedulePrayerNotificationsForDate(
-    notificationManager: NotificationManager,
+    notificationManager: PrayerNotificationManager,
     date: LocalDate,
     now: Instant = Clock.System.now(),
     zone: TimeZone = TimeZone.currentSystemDefault(),
@@ -89,9 +89,9 @@ fun DailyPrayerTime.schedulePrayerNotificationsForDate(
 
         val isAthan = notification.title.lowercase().endsWith("athan")
         val sound = when {
-            isAthan && athanSoundEnabled -> NotificationSoundType.ADHAN
-            !isAthan && iqamaSoundEnabled -> NotificationSoundType.IQAMA
-            else -> NotificationSoundType.DEFAULT
+            isAthan && athanSoundEnabled -> PrayerNotificationSound.ADHAN
+            !isAthan && iqamaSoundEnabled -> PrayerNotificationSound.IQAMA
+            else -> PrayerNotificationSound.DEFAULT
         }
 
         notificationManager.scheduleNotification(
@@ -99,7 +99,7 @@ fun DailyPrayerTime.schedulePrayerNotificationsForDate(
             triggerAt = notification.triggerAt,
             title = notification.title,
             description = notification.body,
-            soundType = sound
+            sound = sound
         )
     }
 }

@@ -1,4 +1,4 @@
-package com.knight.salah.platform
+package com.knight.salah.notifications
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -18,7 +18,7 @@ import com.knight.salah.R
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
-actual class NotificationManager(
+actual class PrayerNotificationManager(
     private val context: Context
 ) {
     private val systemNotificationManager get() =
@@ -33,10 +33,10 @@ actual class NotificationManager(
     actual fun showNotification(
         title: String,
         description: String,
-        soundType: NotificationSoundType
+        sound: PrayerNotificationSound
     ) {
-        val channelId = channelIdFor(soundType)
-        createNotificationChannelIfNeeded(soundType)
+        val channelId = channelIdFor(sound)
+        createNotificationChannelIfNeeded(sound)
 
         val builder = NotificationCompat.Builder(context, channelId)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
@@ -60,15 +60,15 @@ actual class NotificationManager(
         triggerAt: Instant,
         title: String,
         description: String,
-        soundType: NotificationSoundType
+        sound: PrayerNotificationSound
     ) {
         val triggerMillis = triggerAt.toEpochMilliseconds()
 
-        val intent = Intent(context, AzanAlarmReceiver::class.java).apply {
+        val intent = Intent(context, PrayerAlarmReceiver::class.java).apply {
             putExtra("title", title)
             putExtra("description", description)
             putExtra("notificationId", id)
-            putExtra("soundTypeOrdinal", soundType.ordinal)
+            putExtra("soundTypeOrdinal", sound.ordinal)
         }
 
         val pendingIntent = PendingIntent.getBroadcast(
@@ -88,7 +88,7 @@ actual class NotificationManager(
     }
 
     actual fun cancelScheduledNotification(id: String) {
-        val intent = Intent(context, AzanAlarmReceiver::class.java)
+        val intent = Intent(context, PrayerAlarmReceiver::class.java)
         val pendingIntent = PendingIntent.getBroadcast(
             context,
             id.hashCode(),
@@ -117,36 +117,36 @@ actual class NotificationManager(
 
     fun ensureAllChannels() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            createNotificationChannelIfNeeded(NotificationSoundType.DEFAULT)
-            createNotificationChannelIfNeeded(NotificationSoundType.ADHAN)
-            createNotificationChannelIfNeeded(NotificationSoundType.IQAMA)
+            createNotificationChannelIfNeeded(PrayerNotificationSound.DEFAULT)
+            createNotificationChannelIfNeeded(PrayerNotificationSound.ADHAN)
+            createNotificationChannelIfNeeded(PrayerNotificationSound.IQAMA)
         }
     }
 
-    private fun channelIdFor(type: NotificationSoundType): String = when (type) {
-        NotificationSoundType.DEFAULT -> CHANNEL_ID_DEFAULT
-        NotificationSoundType.ADHAN   -> CHANNEL_ID_ADHAN
-        NotificationSoundType.IQAMA   -> CHANNEL_ID_IQAMA
+    private fun channelIdFor(type: PrayerNotificationSound): String = when (type) {
+        PrayerNotificationSound.DEFAULT -> CHANNEL_ID_DEFAULT
+        PrayerNotificationSound.ADHAN   -> CHANNEL_ID_ADHAN
+        PrayerNotificationSound.IQAMA   -> CHANNEL_ID_IQAMA
     }
 
-    private fun soundUriFor(type: NotificationSoundType): Uri? = when (type) {
-        NotificationSoundType.DEFAULT -> null
-        NotificationSoundType.ADHAN   ->
+    private fun soundUriFor(type: PrayerNotificationSound): Uri? = when (type) {
+        PrayerNotificationSound.DEFAULT -> null
+        PrayerNotificationSound.ADHAN   ->
             Uri.parse("android.resource://${context.packageName}/${R.raw.adhan}")
-        NotificationSoundType.IQAMA   ->
+        PrayerNotificationSound.IQAMA   ->
             Uri.parse("android.resource://${context.packageName}/${R.raw.iqama}")
     }
 
-    private fun createNotificationChannelIfNeeded(type: NotificationSoundType) {
+    private fun createNotificationChannelIfNeeded(type: PrayerNotificationSound) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
 
         val channelId = channelIdFor(type)
         if (systemNotificationManager.getNotificationChannel(channelId) != null) return
 
         val name = when (type) {
-            NotificationSoundType.DEFAULT -> "Prayer (default)"
-            NotificationSoundType.ADHAN   -> "Prayer – Adhan"
-            NotificationSoundType.IQAMA   -> "Prayer – Iqama"
+            PrayerNotificationSound.DEFAULT -> "Prayer (default)"
+            PrayerNotificationSound.ADHAN   -> "Prayer – Adhan"
+            PrayerNotificationSound.IQAMA   -> "Prayer – Iqama"
         }
 
         val channel = NotificationChannel(

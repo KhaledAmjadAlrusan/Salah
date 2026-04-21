@@ -1,4 +1,4 @@
-package com.knight.salah.platform
+package com.knight.salah.notifications
 
 import kotlinx.datetime.toNSDate
 import platform.Foundation.NSBundle
@@ -29,7 +29,7 @@ import kotlin.time.Instant
 
 private const val TAG = "[iOS NotificationManager]"
 
-actual class NotificationManager {
+actual class PrayerNotificationManager {
     private val center = UNUserNotificationCenter.currentNotificationCenter()
 
     init {
@@ -47,13 +47,13 @@ actual class NotificationManager {
     actual fun showNotification(
         title: String,
         description: String,
-        soundType: NotificationSoundType
+        sound: PrayerNotificationSound
     ) {
-        val sound = soundForType(soundType)
+        val notificationSound = soundForType(sound)
         val content = UNMutableNotificationContent().apply {
             setTitle(title)
             setBody(description)
-            setSound(sound)
+            setSound(notificationSound)
         }
         val uuid = NSUUID.UUID().UUIDString()
         val request = UNNotificationRequest.requestWithIdentifier(uuid, content, null)
@@ -72,7 +72,7 @@ actual class NotificationManager {
         triggerAt: Instant,
         title: String,
         description: String,
-        soundType: NotificationSoundType
+        sound: PrayerNotificationSound
     ) {
         val date = triggerAt.toNSDate()
         val calendar = NSCalendar.currentCalendar
@@ -84,11 +84,11 @@ actual class NotificationManager {
                     NSCalendarUnitMinute,
             fromDate = date
         ) as NSDateComponents
-        val sound = soundForType(soundType)
+        val notificationSound = soundForType(sound)
         val content = UNMutableNotificationContent().apply {
             setTitle(title)
             setBody(description)
-            setSound(sound)
+            setSound(notificationSound)
         }
         val trigger = UNCalendarNotificationTrigger.triggerWithDateMatchingComponents(
             comps,
@@ -112,13 +112,13 @@ actual class NotificationManager {
         center.removeAllDeliveredNotifications()
     }
 
-    private fun soundForType(type: NotificationSoundType): UNNotificationSound? {
+    private fun soundForType(type: PrayerNotificationSound): UNNotificationSound? {
         val bundle = NSBundle.mainBundle
         return when (type) {
-            NotificationSoundType.DEFAULT -> {
+            PrayerNotificationSound.DEFAULT -> {
                 UNNotificationSound.defaultSound()
             }
-            NotificationSoundType.ADHAN -> {
+            PrayerNotificationSound.ADHAN -> {
                 val path = bundle.pathForResource("adhan_short", "caf")
                 if (path == null) {
                     UNNotificationSound.defaultSound()
@@ -126,7 +126,7 @@ actual class NotificationManager {
                     UNNotificationSound.soundNamed("adhan_short.caf")
                 }
             }
-            NotificationSoundType.IQAMA -> {
+            PrayerNotificationSound.IQAMA -> {
                 val path = bundle.pathForResource("iqama_short", "caf")
                 if (path == null) {
                     UNNotificationSound.defaultSound()

@@ -1,4 +1,4 @@
-package com.knight.salah.data.datastore.mosue
+package com.knight.salah.data.datastore.mosque
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences

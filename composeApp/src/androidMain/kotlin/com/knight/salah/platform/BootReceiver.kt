@@ -3,7 +3,7 @@ package com.knight.salah.platform
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import com.knight.salah.domain.repoistory.prayer.RefreshPrayerUseCase
+import com.knight.salah.domain.repository.prayer.RefreshPrayerUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob

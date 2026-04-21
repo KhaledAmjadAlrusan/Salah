@@ -1,6 +1,6 @@
-package com.knight.salah.domain.repoistory.mosque
+package com.knight.salah.domain.repository.mosque
 
-import com.knight.salah.data.datastore.mosue.MosqueDataSource
+import com.knight.salah.data.datastore.mosque.MosqueDataSource
 import com.knight.salah.data.mosque.MosqueApi
 import com.knight.salah.domain.model.remote.mosque.AwqatMosque
 import kotlinx.coroutines.ExperimentalCoroutinesApi

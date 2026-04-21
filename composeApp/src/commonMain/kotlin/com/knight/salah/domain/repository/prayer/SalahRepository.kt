@@ -1,13 +1,13 @@
-package com.knight.salah.domain.repoistory.prayer
+package com.knight.salah.domain.repository.prayer
 
-import com.knight.salah.data.datastore.mosue.MosqueDataSource
+import com.knight.salah.data.datastore.mosque.MosqueDataSource
 import com.knight.salah.data.local.PrayerTimeDao
 import com.knight.salah.data.prayer.PrayerApi
 import com.knight.salah.domain.model.local.prayer.PrayerTimeEntity
 import com.knight.salah.domain.model.mapper.asDomain
 import com.knight.salah.domain.model.mapper.asEntity
-import com.knight.salah.domain.model.remote.pryaer.DailyPrayerTime
-import com.knight.salah.domain.model.remote.pryaer.DatedPrayerTime
+import com.knight.salah.domain.model.remote.prayer.DailyPrayerTime
+import com.knight.salah.domain.model.remote.prayer.DatedPrayerTime
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged

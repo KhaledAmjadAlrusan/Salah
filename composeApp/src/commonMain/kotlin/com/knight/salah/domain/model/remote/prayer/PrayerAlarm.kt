@@ -1,4 +1,4 @@
-package com.knight.salah.domain.model.remote.pryaer
+package com.knight.salah.domain.model.remote.prayer
 
 import com.knight.salah.core.util.toLocalTimeOrNull
 import kotlinx.datetime.DayOfWeek

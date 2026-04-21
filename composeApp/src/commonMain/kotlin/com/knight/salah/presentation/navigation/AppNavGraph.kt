@@ -14,7 +14,7 @@ import androidx.navigation.compose.rememberNavController
 import com.knight.salah.presentation.screens.main.MainPrayersScreen
 import com.knight.salah.presentation.screens.search.SearchScreen
 import com.knight.salah.presentation.screens.search.viewmodel.SearchMosqueViewModel
-import com.knight.salah.presentation.screens.setting.SettingsScreen
+import com.knight.salah.presentation.screens.settings.SettingsScreen
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable

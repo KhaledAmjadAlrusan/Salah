@@ -25,7 +25,7 @@
         </activity>
 
         <receiver
-            android:name=".platform.AzanAlarmReceiver"
+            android:name=".notifications.PrayerAlarmReceiver"
             android:enabled="true"
             android:exported="false" />
 

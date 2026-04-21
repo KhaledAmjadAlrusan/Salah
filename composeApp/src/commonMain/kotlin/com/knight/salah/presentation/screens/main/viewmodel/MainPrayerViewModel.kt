@@ -2,10 +2,10 @@ package com.knight.salah.presentation.screens.main.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.knight.salah.domain.model.remote.pryaer.DailyPrayerTime
-import com.knight.salah.domain.repoistory.mosque.MosqueRepository
-import com.knight.salah.domain.repoistory.prayer.RefreshPrayerUseCase
-import com.knight.salah.domain.repoistory.prayer.SalahRepository
+import com.knight.salah.domain.model.remote.prayer.DailyPrayerTime
+import com.knight.salah.domain.repository.mosque.MosqueRepository
+import com.knight.salah.domain.repository.prayer.RefreshPrayerUseCase
+import com.knight.salah.domain.repository.prayer.SalahRepository
 import com.knight.salah.presentation.screens.main.data.PrayerState
 import com.knight.salah.presentation.screens.main.data.buildTodayLabel
 import com.knight.salah.presentation.screens.main.data.nextSwitchInstant

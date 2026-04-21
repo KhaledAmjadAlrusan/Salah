@@ -1,13 +1,13 @@
-package com.knight.salah.platform
+package com.knight.salah.notifications
 
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
-expect class NotificationManager {
+expect class PrayerNotificationManager {
     fun showNotification(
         title: String,
         description: String,
-        soundType: NotificationSoundType = NotificationSoundType.DEFAULT
+        sound: PrayerNotificationSound = PrayerNotificationSound.DEFAULT
     )
 
     @OptIn(ExperimentalTime::class)
@@ -16,14 +16,14 @@ expect class NotificationManager {
         triggerAt: Instant,
         title: String,
         description: String,
-        soundType: NotificationSoundType
+        sound: PrayerNotificationSound
     )
 
     fun cancelScheduledNotification(id: String)
     fun cancelAllPrayerNotifications()
 }
 
-enum class NotificationSoundType {
+enum class PrayerNotificationSound {
     DEFAULT,
     ADHAN,
     IQAMA

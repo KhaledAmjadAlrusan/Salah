@@ -5,7 +5,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.knight.salah.data.local.SalahDatabase
-import com.knight.salah.platform.NotificationManager
+import com.knight.salah.notifications.PrayerNotificationManager
 import com.mmk.kmpnotifier.notification.NotifierManager
 import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
 import kotlinx.cinterop.ExperimentalForeignApi
@@ -60,6 +60,6 @@ actual fun getSalahDatabaseBuilder(): RoomDatabase.Builder<SalahDatabase> {
 }
 
 actual fun platformModule(): Module = module {
-    single { NotificationManager() }
+    single { PrayerNotificationManager() }
     single<DataStore<Preferences>> { provideDataStore() }
 }

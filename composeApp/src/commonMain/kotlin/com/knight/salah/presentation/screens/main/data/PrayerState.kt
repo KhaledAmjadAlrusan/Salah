@@ -1,10 +1,10 @@
 package com.knight.salah.presentation.screens.main.data
 
 import com.knight.salah.core.util.toLocalTimeOrNull
-import com.knight.salah.domain.model.remote.pryaer.DailyPrayerTime
-import com.knight.salah.domain.model.remote.pryaer.buildPrayerNotificationsForDay
-import com.knight.salah.platform.NotificationManager
-import com.knight.salah.platform.NotificationSoundType
+import com.knight.salah.domain.model.remote.prayer.DailyPrayerTime
+import com.knight.salah.domain.model.remote.prayer.buildPrayerNotificationsForDay
+import com.knight.salah.notifications.PrayerNotificationManager
+import com.knight.salah.notifications.PrayerNotificationSound
 import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
@@ -151,7 +151,7 @@ fun DailyPrayerTime.nextSwitchInstant(
 
 @OptIn(ExperimentalTime::class)
 fun DailyPrayerTime.schedulePrayerNotifications(
-    notificationManager: NotificationManager,
+    notificationManager: PrayerNotificationManager,
     daysToSchedule: Int = 1,
     now: Instant = Clock.System.now(),
     zone: TimeZone = TimeZone.currentSystemDefault(),
@@ -170,11 +170,11 @@ fun DailyPrayerTime.schedulePrayerNotifications(
             if (date == today && n.triggerAt < now) return@forEach
             val isAthan = n.title.lowercase().endsWith("athan")
             val sound = when {
-                isAthan && athanSoundEnabled -> NotificationSoundType.ADHAN
-                isAthan && !athanSoundEnabled -> NotificationSoundType.DEFAULT
-                !isAthan && iqamaSoundEnabled -> NotificationSoundType.IQAMA
-                !isAthan && !iqamaSoundEnabled -> NotificationSoundType.DEFAULT
-                else -> NotificationSoundType.DEFAULT
+                isAthan && athanSoundEnabled -> PrayerNotificationSound.ADHAN
+                isAthan && !athanSoundEnabled -> PrayerNotificationSound.DEFAULT
+                !isAthan && iqamaSoundEnabled -> PrayerNotificationSound.IQAMA
+                !isAthan && !iqamaSoundEnabled -> PrayerNotificationSound.DEFAULT
+                else -> PrayerNotificationSound.DEFAULT
             }
 
             notificationManager.scheduleNotification(
@@ -182,7 +182,7 @@ fun DailyPrayerTime.schedulePrayerNotifications(
                 triggerAt = n.triggerAt,
                 title = n.title,
                 description = n.body,
-                soundType = sound
+                sound = sound
             )
         }
     }

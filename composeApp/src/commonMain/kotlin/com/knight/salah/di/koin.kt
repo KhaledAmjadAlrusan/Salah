@@ -1,7 +1,7 @@
 package com.knight.salah.di
 
 import com.knight.salah.data.ApiClient
-import com.knight.salah.data.datastore.mosue.MosqueDataSource
+import com.knight.salah.data.datastore.mosque.MosqueDataSource
 import com.knight.salah.data.datastore.setting.SettingDataSource
 import com.knight.salah.data.local.PrayerTimeDao
 import com.knight.salah.data.local.SalahDatabase
@@ -9,14 +9,14 @@ import com.knight.salah.data.local.createSalahDatabase
 import com.knight.salah.data.mosque.MosqueApi
 import com.knight.salah.data.mosque.mock.MockMosqueApi
 import com.knight.salah.data.prayer.PrayerApi
-import com.knight.salah.domain.repoistory.mosque.MosqueRepository
-import com.knight.salah.domain.repoistory.prayer.RefreshPrayerUseCase
-import com.knight.salah.domain.repoistory.prayer.SalahRepository
-import com.knight.salah.domain.repoistory.setting.SettingRepository
+import com.knight.salah.domain.repository.mosque.MosqueRepository
+import com.knight.salah.domain.repository.prayer.RefreshPrayerUseCase
+import com.knight.salah.domain.repository.prayer.SalahRepository
+import com.knight.salah.domain.repository.setting.SettingRepository
 import com.knight.salah.platformModule
 import com.knight.salah.presentation.screens.main.viewmodel.MainPrayerViewModel
 import com.knight.salah.presentation.screens.search.viewmodel.SearchMosqueViewModel
-import com.knight.salah.presentation.screens.setting.viewmodel.SettingViewModel
+import com.knight.salah.presentation.screens.settings.viewmodel.SettingsViewModel
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.serialization.kotlinx.json.json
@@ -64,7 +64,7 @@ val dataModule = module {
 
 val viewModelModule = module {
     factoryOf(::MainPrayerViewModel)
-    factoryOf(::SettingViewModel)
+    factoryOf(::SettingsViewModel)
     factoryOf(::SearchMosqueViewModel)
 }
 

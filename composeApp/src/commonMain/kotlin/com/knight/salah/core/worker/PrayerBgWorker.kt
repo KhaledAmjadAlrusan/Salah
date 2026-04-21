@@ -1,6 +1,6 @@
 package com.knight.salah.core.worker
 
-import com.knight.salah.domain.repoistory.prayer.RefreshPrayerUseCase
+import com.knight.salah.domain.repository.prayer.RefreshPrayerUseCase
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
