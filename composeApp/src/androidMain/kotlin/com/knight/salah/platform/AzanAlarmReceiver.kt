@@ -42,7 +42,9 @@ class AzanAlarmReceiver : BroadcastReceiver() {
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setAutoCancel(true)
 
-        NotificationManagerCompat.from(context)
-            .notify(notificationId, builder.build())
+        NotificationManagerCompat.from(context).apply {
+            cancelAll()
+            notify(notificationId, builder.build())
+        }
     }
 }

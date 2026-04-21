@@ -4,13 +4,16 @@ import android.content.ContentResolver
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.os.Build
-import com.mmk.kmpnotifier.notification.NotifierManager
-import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
 import androidx.core.net.toUri
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.room.Room
+import androidx.room.RoomDatabase
+import com.knight.salah.data.local.SalahDatabase
 import com.knight.salah.datastore.SettingDataStore
 import com.knight.salah.platform.NotificationManager
+import com.mmk.kmpnotifier.notification.NotifierManager
+import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
@@ -37,6 +40,15 @@ actual fun onApplicationStartPlatformSpecific() {
                 soundUri = customNotificationSound.toString()
             )
         )
+    )
+}
+
+actual fun getSalahDatabaseBuilder(): RoomDatabase.Builder<SalahDatabase> {
+    val context = SalahApp.applicationContext()
+    val dbFile = context.getDatabasePath("salah.db")
+    return Room.databaseBuilder<SalahDatabase>(
+        context = context,
+        name = dbFile.absolutePath
     )
 }
 

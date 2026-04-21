@@ -1,4 +1,4 @@
-package com.knight.salah.domain.model
+package com.knight.salah.domain.model.remote.mosque
 
 import kotlinx.serialization.Serializable
 
@@ -9,6 +9,7 @@ data class Mosque(
     val location: String,
     val distance: String
 )
+
 fun generateMosques(): List<Mosque> {
     return listOf(
         Mosque("1", "Masjid Al-Haram", "Mecca, Saudi Arabia", "0 km"),

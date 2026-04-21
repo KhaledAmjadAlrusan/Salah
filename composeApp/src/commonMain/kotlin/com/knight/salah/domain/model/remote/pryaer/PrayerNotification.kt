@@ -1,4 +1,4 @@
-package com.knight.salah.domain.model
+package com.knight.salah.domain.model.remote.pryaer
 
 import com.knight.salah.core.util.toLocalTimeOrNull
 import kotlinx.datetime.DayOfWeek
@@ -19,7 +19,7 @@ data class PrayerNotification(
 )
 
 @OptIn(ExperimentalTime::class)
-fun PrayerTime.buildPrayerNotificationsForDay(
+fun DailyPrayerTime.buildPrayerNotificationsForDay(
     date: LocalDate,
     zone: TimeZone = TimeZone.currentSystemDefault()
 ): List<PrayerNotification> {
@@ -59,23 +59,22 @@ fun PrayerTime.buildPrayerNotificationsForDay(
     }
 
     // Always
-    add("Fajr",    prayers.fajr.athan,    prayers.fajr.iqama)
-    add("Asr",     prayers.asr.athan,     prayers.asr.iqama)
-    add("Maghrib", prayers.maghrib.athan, prayers.maghrib.iqama)
-    add("Isha",    prayers.isha.athan,    prayers.isha.iqama)
+    add("Fajr", fajrAzan, fajrIqamah)
+    add("Asr", asrAzan, asrIqamah)
+    add("Maghrib", maghribAzan, maghribIqamah)
+    add("Isha", ishaAzan, ishaIqamah)
 
     if (date.dayOfWeek == DayOfWeek.FRIDAY) {
-        // Friday: Jumuah instead of Dhuhr
-        prayers.jumuahPrayer.forEachIndexed { index, j ->
-            val name =
-                if (prayers.jumuahPrayer.size > 1) "Jumu'ah ${index + 1}" else "Jumu'ah"
-            add(name, j.khutbah, j.iqama)
+        add("Jumu'ah", jumahTime1, jumahTime1)
+        if (jumahTime2 != null) {
+            add("Jumu'ah", jumahTime2, jumahTime2)
+        }
+        if (jumahTime3 != null) {
+            add("Jumu'ah", jumahTime3, jumahTime3)
         }
     } else {
-        // Other days: normal Dhuhr, no Jumuah
-        add("Dhuhr", prayers.dhuhr.athan, prayers.dhuhr.iqama)
+        add("Dhuhr", dhuhrAzan, dhuhrIqamah)
     }
 
     return result
 }
-

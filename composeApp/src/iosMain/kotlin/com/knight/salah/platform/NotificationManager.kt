@@ -58,6 +58,7 @@ actual class NotificationManager {
         val uuid = NSUUID.UUID().UUIDString()
         val request = UNNotificationRequest.requestWithIdentifier(uuid, content, null)
         setDelegateIfNeeded()
+        center.removeAllDeliveredNotifications()
         center.addNotificationRequest(request) { error ->
             if (error != null) {
                 println("$TAG showNotification() addNotificationRequest error=$error")
@@ -108,6 +109,7 @@ actual class NotificationManager {
 
     actual fun cancelAllPrayerNotifications() {
         center.removeAllPendingNotificationRequests()
+        center.removeAllDeliveredNotifications()
     }
 
     private fun soundForType(type: NotificationSoundType): UNNotificationSound? {

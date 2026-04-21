@@ -1,8 +1,8 @@
-package com.knight.salah.presentation.screens.main.viewmodel.state
+package com.knight.salah.presentation.screens.main.data
 
 import com.knight.salah.core.util.toLocalTimeOrNull
-import com.knight.salah.domain.model.PrayerTime
-import com.knight.salah.domain.model.buildPrayerNotificationsForDay
+import com.knight.salah.domain.model.remote.pryaer.DailyPrayerTime
+import com.knight.salah.domain.model.remote.pryaer.buildPrayerNotificationsForDay
 import com.knight.salah.platform.NotificationManager
 import com.knight.salah.platform.NotificationSoundType
 import kotlinx.datetime.DatePeriod
@@ -33,41 +33,53 @@ data class PrayerRow(
     val isNextPrayer: Boolean = false
 )
 
-private fun PrayerTime.buildPrayerRows(): List<PrayerRow> {
+private fun DailyPrayerTime.buildPrayerRows(): List<PrayerRow> {
     val rows = mutableListOf<PrayerRow>()
 
     rows += PrayerRow(
         name = "Fajr",
-        athan = prayers.fajr.athan.toLocalTimeOrNull(),
-        iqama = prayers.fajr.iqama.toLocalTimeOrNull()
+        athan = fajrAzan.toLocalTimeOrNull(),
+        iqama = fajrIqamah.toLocalTimeOrNull()
     )
     rows += PrayerRow(
         name = "Dhuhr",
-        athan = prayers.dhuhr.athan.toLocalTimeOrNull(),
-        iqama = prayers.dhuhr.iqama.toLocalTimeOrNull()
+        athan = dhuhrAzan.toLocalTimeOrNull(),
+        iqama = dhuhrIqamah.toLocalTimeOrNull()
     )
     rows += PrayerRow(
         name = "Asr",
-        athan = prayers.asr.athan.toLocalTimeOrNull(),
-        iqama = prayers.asr.iqama.toLocalTimeOrNull()
+        athan = asrAzan.toLocalTimeOrNull(),
+        iqama = asrIqamah.toLocalTimeOrNull()
     )
     rows += PrayerRow(
         name = "Maghrib",
-        athan = prayers.maghrib.athan.toLocalTimeOrNull(),
-        iqama = prayers.maghrib.iqama.toLocalTimeOrNull()
+        athan = maghribAzan.toLocalTimeOrNull(),
+        iqama = maghribIqamah.toLocalTimeOrNull()
     )
     rows += PrayerRow(
         name = "Isha",
-        athan = prayers.isha.athan.toLocalTimeOrNull(),
-        iqama = prayers.isha.iqama.toLocalTimeOrNull()
+        athan = ishaAzan.toLocalTimeOrNull(),
+        iqama = ishaIqamah.toLocalTimeOrNull()
     )
 
-    prayers.jumuahPrayer.forEachIndexed { index, j ->
-        val label = if (prayers.jumuahPrayer.size > 1) "Jumu'ah ${index + 1}" else "Jumu'ah"
+    rows += PrayerRow(
+        name = "Jumu'ah",
+        athan = jumahTime1.toLocalTimeOrNull(),
+        iqama = jumahTime1.toLocalTimeOrNull()
+    )
+
+    if (jumahTime2 != null) {
         rows += PrayerRow(
-            name = label,
-            athan = j.khutbah.toLocalTimeOrNull(),
-            iqama = j.iqama.toLocalTimeOrNull()
+            name = "Jumu'ah",
+            athan = jumahTime2.toLocalTimeOrNull(),
+            iqama = jumahTime2.toLocalTimeOrNull()
+        )
+    }
+    if (jumahTime3 != null) {
+        rows += PrayerRow(
+            name = "Jumu'ah",
+            athan = jumahTime3.toLocalTimeOrNull(),
+            iqama = jumahTime3.toLocalTimeOrNull()
         )
     }
 
@@ -75,7 +87,7 @@ private fun PrayerTime.buildPrayerRows(): List<PrayerRow> {
 }
 
 @OptIn(ExperimentalTime::class)
-fun PrayerTime.toPrayerRowsWithNext(
+fun DailyPrayerTime.toPrayerRowsWithNext(
     now: Instant = Clock.System.now(),
     zone: TimeZone = TimeZone.currentSystemDefault()
 ): List<PrayerRow> {
@@ -121,7 +133,7 @@ fun List<PrayerRow>.markNextPrayer(
 }
 
 @OptIn(ExperimentalTime::class)
-fun PrayerTime.nextSwitchInstant(
+fun DailyPrayerTime.nextSwitchInstant(
     now: Instant,
     zone: TimeZone = TimeZone.currentSystemDefault()
 ): Instant? {
@@ -138,7 +150,7 @@ fun PrayerTime.nextSwitchInstant(
 }
 
 @OptIn(ExperimentalTime::class)
-fun PrayerTime.schedulePrayerNotifications(
+fun DailyPrayerTime.schedulePrayerNotifications(
     notificationManager: NotificationManager,
     daysToSchedule: Int = 1,
     now: Instant = Clock.System.now(),

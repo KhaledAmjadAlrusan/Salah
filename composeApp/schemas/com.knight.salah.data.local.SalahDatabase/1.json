@@ -1,0 +1,153 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "f491bf2b0c2084ece90e9740bb887d5d",
+    "entities": [
+      {
+        "tableName": "prayer_times",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`organization_id` TEXT NOT NULL, `prayer_date` TEXT NOT NULL, `asr_azan` TEXT NOT NULL, `asr_iqamah` TEXT NOT NULL, `created_at` TEXT NOT NULL, `dhuhr_azan` TEXT NOT NULL, `dhuhr_iqamah` TEXT NOT NULL, `fajr_azan` TEXT NOT NULL, `fajr_iqamah` TEXT NOT NULL, `id` TEXT NOT NULL, `isha_azan` TEXT NOT NULL, `isha_iqamah` TEXT NOT NULL, `jumah_time_1` TEXT NOT NULL, `jumah_time_2` TEXT, `jumah_time_3` TEXT, `maghrib_azan` TEXT NOT NULL, `maghrib_iqamah` TEXT NOT NULL, `sunrise` TEXT NOT NULL, `tmrw_fajr_azan` TEXT, `tmrw_fajr_iqamah` TEXT, `zawal` TEXT, `fetched_at_epoch_ms` INTEGER NOT NULL, PRIMARY KEY(`organization_id`, `prayer_date`))",
+        "fields": [
+          {
+            "fieldPath": "organizationId",
+            "columnName": "organization_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "prayerDate",
+            "columnName": "prayer_date",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "asrAzan",
+            "columnName": "asr_azan",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "asrIqamah",
+            "columnName": "asr_iqamah",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "created_at",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dhuhrAzan",
+            "columnName": "dhuhr_azan",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dhuhrIqamah",
+            "columnName": "dhuhr_iqamah",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fajrAzan",
+            "columnName": "fajr_azan",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fajrIqamah",
+            "columnName": "fajr_iqamah",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ishaAzan",
+            "columnName": "isha_azan",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ishaIqamah",
+            "columnName": "isha_iqamah",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "jumahTime1",
+            "columnName": "jumah_time_1",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "jumahTime2",
+            "columnName": "jumah_time_2",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "jumahTime3",
+            "columnName": "jumah_time_3",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "maghribAzan",
+            "columnName": "maghrib_azan",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "maghribIqamah",
+            "columnName": "maghrib_iqamah",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sunrise",
+            "columnName": "sunrise",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tmrwFajrAzan",
+            "columnName": "tmrw_fajr_azan",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "tmrwFajrIqamah",
+            "columnName": "tmrw_fajr_iqamah",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "zawal",
+            "columnName": "zawal",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "fetchedAtEpochMs",
+            "columnName": "fetched_at_epoch_ms",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "organization_id",
+            "prayer_date"
+          ]
+        }
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f491bf2b0c2084ece90e9740bb887d5d')"
+    ]
+  }
+}

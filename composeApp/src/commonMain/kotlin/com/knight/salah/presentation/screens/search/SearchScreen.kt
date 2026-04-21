@@ -19,28 +19,24 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.knight.salah.domain.model.Mosque
-import com.knight.salah.domain.model.generateMosques
+import com.knight.salah.domain.model.remote.mosque.AwqatMosque
 import com.knight.salah.presentation.components.MosqueSearchResultItem
 import com.knight.salah.presentation.components.SearchBar
+import com.knight.salah.presentation.screens.search.data.SearchMosqueEvent
+import com.knight.salah.presentation.screens.search.data.SearchMosqueState
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(
-    onBackClick:()->Unit,
-    onMosqueSelected: (String) -> Unit = {}
+    state: SearchMosqueState,
+    onEvent: (SearchMosqueEvent) -> Unit,
+    onBackClick: () -> Unit
 ) {
-    var searchQuery by remember { mutableStateOf("") }
-
     Scaffold(
         topBar = {
             TopAppBar(
@@ -65,25 +61,23 @@ fun SearchScreen(
                 }
             )
         }
-    ) {paddingValues ->
+    ) { paddingValues ->
         SearchContent(
             modifier = Modifier.padding(paddingValues),
-            searchQuery = searchQuery,
-            onMosqueSelected = {onMosqueSelected(searchQuery)},
-            onSearchQuery = {searchQuery = it}
-
+            state = state,
+            onEvent = onEvent,
+            onBackClick = onBackClick
         )
-
     }
 }
+
 @Composable
 private fun SearchContent(
     modifier: Modifier = Modifier,
-    searchQuery: String,
-    onSearchQuery: (String) -> Unit,
-    onMosqueSelected: (String) -> Unit,
-
-    ){
+    state: SearchMosqueState,
+    onEvent: (SearchMosqueEvent) -> Unit,
+    onBackClick: () -> Unit
+) {
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -91,8 +85,10 @@ private fun SearchContent(
     ) {
         // Search Bar
         SearchBar(
-            searchQuery = searchQuery,
-            onSearchQueryChange =  onSearchQuery ,
+            searchQuery = state.searchQuery,
+            onSearchQueryChange = {
+                onEvent(SearchMosqueEvent.OnSearchQueryChange(it))
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
@@ -100,7 +96,7 @@ private fun SearchContent(
 
         // Results Count
         Text(
-            text = "mosques found",
+            text = "Mosques found",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.outline,
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
@@ -113,10 +109,13 @@ private fun SearchContent(
                 .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            items(generateMosques()) { mosque->
+            items(items = state.searchResults, key = { it.id }) { mosque ->
                 MosqueSearchResultItem(
                     mosque = mosque,
-                    onMosqueClick = { onMosqueSelected(mosque.name) },
+                    onMosqueClick = {
+                        onEvent(SearchMosqueEvent.OnMosqueSelected(mosque.id))
+                        onBackClick()
+                    },
                     modifier = Modifier.fillMaxWidth()
                 )
             }
@@ -125,15 +124,27 @@ private fun SearchContent(
 }
 
 
-
 @Preview(showBackground = true)
 @Composable
 fun PreviewSearchScreen() {
-    val mosque= Mosque(
+    val mosque = AwqatMosque(
         id = "1",
         name = "Khaled bin Al Waleed",
-        location = "Vancover",
-        distance = "3.5 km"
+        city = "Vancover",
+        address = "Vancover",
+        isActive = true,
+        latitude = 37.7749,
+        longitude = -122.4194,
+        type = "mosque",
+        provinceState = "BC"
     )
-    SearchScreen({})
+    val state = SearchMosqueState(
+        mosques = listOf(mosque),
+        searchResults = listOf(mosque)
+    )
+    SearchScreen(
+        state = state,
+        onEvent = {},
+        onBackClick = {}
+    )
 }

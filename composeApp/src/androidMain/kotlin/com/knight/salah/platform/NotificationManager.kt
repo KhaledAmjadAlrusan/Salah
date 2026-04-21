@@ -46,8 +46,10 @@ actual class NotificationManager(
             .setAutoCancel(true)
 
         if (areNotificationEnabled) {
-            NotificationManagerCompat.from(context)
-                .notify(NOW_NOTIFICATION_ID, builder.build())
+            NotificationManagerCompat.from(context).apply {
+                cancelAll()
+                notify(NOW_NOTIFICATION_ID, builder.build())
+            }
         }
     }
 
@@ -107,6 +109,7 @@ actual class NotificationManager(
         }
 
         clearScheduledNotificationIds()
+        NotificationManagerCompat.from(context).cancelAll()
     }
 
     private val areNotificationEnabled get() =

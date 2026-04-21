@@ -1,0 +1,76 @@
+package com.knight.salah.domain.model.remote.pryaer
+
+import com.knight.salah.core.util.toLocalTimeOrNull
+import kotlinx.datetime.DayOfWeek
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atTime
+import kotlinx.datetime.toInstant
+import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
+
+@OptIn(ExperimentalTime::class)
+data class PrayerAlarm(
+    val requestId: String,
+    val title: String,
+    val body: String,
+    val triggerAt: Instant
+)
+
+
+//@OptIn(ExperimentalTime::class)
+//fun DailyPrayerTime.buildAlarmsForToday(
+//    now: Instant = Clock.System.now(),
+//    zone: TimeZone = TimeZone.currentSystemDefault()
+//): List<PrayerAlarm> {
+//    val today = now.toLocalDateTime(zone).date
+//    fun at(date: LocalDate, time: LocalTime?) =
+//        time?.let { date.atTime(it).toInstant(zone) }
+//
+//    val alarms = mutableListOf<PrayerAlarm>()
+//
+//    fun add(name: String, azan: String?, iqama: String?) {
+//        azan?.toLocalTimeOrNull()?.let { t ->
+//            at(today, t)?.let { instant ->
+//                alarms += PrayerAlarm(
+//                    requestId = "$id-$name-athan",
+//                    title = "$name – Athan",
+//                    body = "Time for $name",
+//                    triggerAt = instant
+//                )
+//            }
+//        }
+//        iqama?.toLocalTimeOrNull()?.let { t ->
+//            at(today, t)?.let { instant ->
+//                alarms += PrayerAlarm(
+//                    requestId = "$id-$name-iqama",
+//                    title = "$name – Iqama",
+//                    body = "Iqama for $name",
+//                    triggerAt = instant
+//                )
+//            }
+//        }
+//    }
+//
+//    add("Fajr", fajrAzan, fajrIqamah)
+//    add("Asr", asrAzan, asrIqamah)
+//    add("Maghrib", maghribAzan, maghribIqamah)
+//    add("Isha", ishaAzan, ishaIqamah)
+//
+//    if (today.dayOfWeek == DayOfWeek.FRIDAY) {
+//        add("Jumu'ah", jumahTime1, jumahTime1)
+//        if (jumahTime2 != null) {
+//            add("Jumu'ah", jumahTime2, jumahTime2)
+//        }
+//        if (jumahTime3 != null) {
+//            add("Jumu'ah", jumahTime3, jumahTime3)
+//        }
+//    } else {
+//        add("Dhuhr", dhuhrAzan, dhuhrIqamah)
+//    }
+//
+//    return alarms
+//}

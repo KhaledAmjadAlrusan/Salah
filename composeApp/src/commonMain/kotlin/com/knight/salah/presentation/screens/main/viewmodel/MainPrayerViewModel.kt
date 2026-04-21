@@ -2,18 +2,22 @@ package com.knight.salah.presentation.screens.main.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.knight.salah.domain.model.PrayerTime
-import com.knight.salah.domain.repoistory.RefreshPrayerUseCase
-import com.knight.salah.domain.repoistory.SalahRepository
-import com.knight.salah.platform.NotificationManager
-import com.knight.salah.presentation.screens.main.viewmodel.state.PrayerState
-import com.knight.salah.presentation.screens.main.viewmodel.state.buildTodayLabel
-import com.knight.salah.presentation.screens.main.viewmodel.state.nextSwitchInstant
-import com.knight.salah.presentation.screens.main.viewmodel.state.toPrayerRowsWithNext
+import com.knight.salah.domain.model.remote.pryaer.DailyPrayerTime
+import com.knight.salah.domain.repoistory.mosque.MosqueRepository
+import com.knight.salah.domain.repoistory.prayer.RefreshPrayerUseCase
+import com.knight.salah.domain.repoistory.prayer.SalahRepository
+import com.knight.salah.presentation.screens.main.data.PrayerState
+import com.knight.salah.presentation.screens.main.data.buildTodayLabel
+import com.knight.salah.presentation.screens.main.data.nextSwitchInstant
+import com.knight.salah.presentation.screens.main.data.toPrayerRowsWithNext
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -22,48 +26,64 @@ import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
 class MainPrayerViewModel(
-    private val repository: SalahRepository,
-    private val notificationManager: NotificationManager,
+    private val salahRepository: SalahRepository,
+    private val mosqueRepository: MosqueRepository,
     private val refreshPrayerUseCase: RefreshPrayerUseCase
 ) : ViewModel() {
 
     private val _prayerState = MutableStateFlow(PrayerState())
     val prayerState = _prayerState.asStateFlow()
 
-    private var currentPrayerTime: PrayerTime? = null
     private var watcherJob: Job? = null
 
     init {
-        buildDate()
-        viewModelScope.launch {
-            getPrayerTime()
-        }
-    }
-
-    @OptIn(ExperimentalTime::class)
-    suspend fun getPrayerTime() {
         updateLoading(true)
-
-        val prayerTime = repository.getPrayers()
-        currentPrayerTime = prayerTime
-
-        refreshPrayerUseCase.suspendedRefreshPrayerTimesAndSchedule(daysToSchedule = 7)
-
-        _prayerState.update { state ->
-            state.copy(
-                rows = prayerTime?.toPrayerRowsWithNext() ?: emptyList(),
-                mosqueName = prayerTime?.name ?: "Select Mosque",
-                isLoading = false
-            )
-        }
-
-        restartWatcher()
+        observeScreenData()
+        refreshOnMosqueChange()
     }
 
     @OptIn(ExperimentalTime::class)
-    private fun restartWatcher() {
+    private fun observeScreenData() {
+        viewModelScope.launch {
+            combine(
+                salahRepository.observePrayer(),
+                mosqueRepository.observeSelectedMosque()
+            ) { prayerTime, selectedMosque ->
+                prayerTime to selectedMosque
+            }.collectLatest { (prayerTime, selectedMosque) ->
+                _prayerState.update { state ->
+                    state.copy(
+                        rows = prayerTime?.toPrayerRowsWithNext() ?: emptyList(),
+                        mosqueName = selectedMosque?.name ?: "Select Mosque",
+                        date = buildTodayLabel(),
+                        isLoading = false
+                    )
+                }
+
+                restartWatcher(prayerTime)
+            }
+        }
+    }
+
+    private fun refreshOnMosqueChange() {
+        viewModelScope.launch {
+            mosqueRepository.observeSelectedMosqueId()
+                .filterNotNull()
+                .distinctUntilChanged()
+                .collectLatest {
+                    updateLoading(true)
+                    refreshPrayerUseCase.suspendedRefreshPrayerTimesAndSchedule(
+                        daysToSchedule = 7
+                    )
+                    updateLoading(false)
+                }
+        }
+    }
+
+    @OptIn(ExperimentalTime::class)
+    private fun restartWatcher(prayerTime: DailyPrayerTime?) {
         watcherJob?.cancel()
-        val prayerTime = currentPrayerTime ?: return
+        prayerTime ?: return
 
         watcherJob = viewModelScope.launch {
             val zone = TimeZone.currentSystemDefault()
@@ -71,31 +91,30 @@ class MainPrayerViewModel(
             while (isActive) {
                 val now = Clock.System.now()
 
-                val rowsNow = prayerTime.toPrayerRowsWithNext(now, zone)
-                _prayerState.update { it.copy(rows = rowsNow) }
+                _prayerState.update {
+                    it.copy(
+                        rows = prayerTime.toPrayerRowsWithNext(now, zone),
+                        date = buildTodayLabel(now, zone)
+                    )
+                }
 
                 val next = prayerTime.nextSwitchInstant(now, zone) ?: break
-
-                val delayMs = (next - now).inWholeMilliseconds
-                    .coerceAtLeast(0L)
-
+                val delayMs = (next - now).inWholeMilliseconds.coerceAtLeast(0L)
                 delay(delayMs)
             }
         }
     }
 
-    @OptIn(ExperimentalTime::class)
-    private fun buildDate() {
-        _prayerState.update { state ->
-            state.copy(
-                date = buildTodayLabel()
-            )
-        }
+    fun updateLoading(isLoading: Boolean) {
+        _prayerState.update { it.copy(isLoading = isLoading) }
     }
 
-    fun updateLoading(isLoading: Boolean) {
-        _prayerState.update { state ->
-            state.copy(isLoading = isLoading)
+    fun onManualRefresh() {
+        viewModelScope.launch {
+            refreshPrayerUseCase.suspendedRefreshPrayerTimesAndSchedule(
+                daysToSchedule = 7,
+                forceRefresh = true
+            )
         }
     }
 }

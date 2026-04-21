@@ -38,7 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.knight.salah.presentation.components.PrayerTimeCard
 import com.knight.salah.presentation.screens.main.viewmodel.MainPrayerViewModel
-import com.knight.salah.presentation.screens.main.viewmodel.state.PrayerRow
+import com.knight.salah.presentation.screens.main.data.PrayerRow
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
